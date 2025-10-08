@@ -1,0 +1,26 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+const { title } = Astro.props;
+const pageTitle = title ? `${title} • Math E-Learning SMA` : "Math E-Learning SMA";
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content="Platform pembelajaran Matematika SMA: video pembelajaran dan quiz interaktif." />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Navbar />
+    <div class="mx-auto flex-1">
+      <slot />
+    </div>
+    <Footer />
+  </body>
+</html>

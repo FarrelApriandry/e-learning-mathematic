@@ -1,0 +1,55 @@
+---
+---
+<nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md border-b border-gray-100">
+  <div class="container mx-auto px-4 md:px-6">
+    <div class="flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">M+</div>
+        <div>
+          <div class="text-sm font-semibold text-slate-900">Math<span class="text-amber-400">+</span>Learning</div>
+          <div class="text-xs text-muted-foreground text-slate-500">SMA • Video & Quiz</div>
+        </div>
+      </a>
+
+      <!-- Desktop links -->
+      <div class="hidden md:flex items-center gap-4">
+        <a href="/sma/matematika" class="text-slate-700 hover:text-blue-600 transition">Matematika</a>
+        <a href="/sma/kelas/10" class="text-slate-700 hover:text-blue-600 transition">Quiz</a>
+        <a href="/about" class="text-slate-500 text-sm">Tentang</a>
+        <a href="/contact" class="ml-3 btn-primary">Mulai Belajar</a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" class="p-2 rounded-md hover:bg-slate-100">
+          <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden">
+      <div class="flex flex-col gap-2 py-4">
+        <a href="/sma/matematika" class="px-2 py-2 rounded-md hover:bg-slate-50">Matematika</a>
+        <a href="/sma/quiz" class="px-2 py-2 rounded-md hover:bg-slate-50">Quiz</a>
+        <a href="/about" class="px-2 py-2 rounded-md hover:bg-slate-50">Tentang</a>
+        <a href="/sma/matematika" class="mt-2 px-4 py-2 btn-primary text-center">Mulai Belajar</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Simple slide toggle for mobile nav (vanilla)
+    const btn = document.getElementById('nav-toggle');
+    const menu = document.getElementById('mobile-menu');
+    if(btn && menu){
+      btn.addEventListener('click',()=>{
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+        menu.classList.toggle('hidden');
+      });
+    }
+  </script>
+</nav>

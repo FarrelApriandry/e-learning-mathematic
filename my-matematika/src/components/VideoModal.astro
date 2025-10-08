@@ -1,0 +1,32 @@
+---
+const { } = Astro.props;
+---
+<div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
+  <div class="w-full max-w-3xl bg-white rounded-xl overflow-hidden">
+    <div class="flex justify-between items-center px-4 py-3 border-b">
+      <div class="font-semibold">Player</div>
+      <button id="close-modal" class="text-slate-700 px-2 py-1 rounded hover:bg-slate-100">✕</button>
+    </div>
+    <div id="video-wrap" class="w-full h-[60vh] bg-black/5">
+      <!-- iframe inserted by script -->
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  const modal = document.getElementById('video-modal');
+  const wrap = document.getElementById('video-wrap');
+  const close = document.getElementById('close-modal');
+
+  function openVideo(url){
+    wrap.innerHTML = `<iframe class="w-full h-full" src="${url}" title="video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    modal.classList.remove('hidden');
+  }
+  function closeVideo(){
+    wrap.innerHTML = '';
+    modal.classList.add('hidden');
+  }
+  window.addEventListener('openVideo', (e)=> openVideo(e.detail.url));
+  close.addEventListener('click', closeVideo);
+  modal.addEventListener('click', (ev)=> { if(ev.target === modal) closeVideo(); });
+</script>

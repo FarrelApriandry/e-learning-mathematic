@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../../layouts/MainLayout.astro";
+import CardTopic from "../../../components/CardTopic.astro";
+
+const materiList = [
+  { title: "Aljabar", description: "Pahami konsep dasar dan operasi aljabar.", link: "/sma/matematika/aljabar" },
+  { title: "Trigonometri", description: "Pelajari hubungan antar sudut dan sisi segitiga.", link: "#" },
+  { title: "Geometri", description: "Mengenal bentuk, ukuran, dan posisi ruang.", link: "#" },
+];
+---
+
+<BaseLayout>
+  <div class="px-4 py-16">
+    <h1 class="text-2xl font-bold text-blue-600 mb-6 text-center">Materi Matematika SMA</h1>
+    <div class="grid mx-auto sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {materiList.map((m) => (
+        <CardTopic title={m.title} description={m.description} link={m.link} />
+      ))}
+    </div>
+  </div>  
+</BaseLayout>

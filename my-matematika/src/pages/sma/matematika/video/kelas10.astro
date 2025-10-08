@@ -1,0 +1,14 @@
+---
+import MainLayout from "../../../../layouts/MainLayout.astro";
+import { videos } from '../../../../data/video';
+import VideoCard from '../../../../components/VideoCard.astro';
+const filtered = videos.filter(v => v.kelas === 10);
+---
+<MainLayout title="Video Kelas 10">
+  <section class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">Video — Kelas 10</h1>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filtered.map(v => <VideoCard video={v} />)}
+    </div>
+  </section>
+</MainLayout>

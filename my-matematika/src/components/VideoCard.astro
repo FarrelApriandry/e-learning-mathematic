@@ -1,0 +1,28 @@
+---
+const { video } = Astro.props;
+---
+<div class="card p-0 overflow-hidden">
+  <div class="relative">
+    <img src={video.thumbnail} alt={video.title} class="w-full h-44 object-cover"/>
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="bg-white/70 rounded-full p-3 shadow-md">
+        <span class="text-xl">▶</span>
+      </div>
+    </div>
+  </div>
+  <div class="p-4">
+    <h3 class="font-semibold text-slate-900">{video.title}</h3>
+    <p class="text-sm text-slate-500 mt-1">{video.desc}</p>
+    <button class="mt-4 btn-primary w-full" data-url={video.url} on:click>
+      Tonton Sekarang
+    </button>
+  </div>
+
+  <script type="module">
+    const btn = document.currentScript.closest('.card').querySelector('button');
+    btn.addEventListener('click', ()=> {
+      const ev = new CustomEvent('openVideo', { detail: { url: btn.dataset.url }});
+      window.dispatchEvent(ev);
+    });
+  </script>
+</div>

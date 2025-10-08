@@ -1,0 +1,10 @@
+---
+import MainLayout from "../../../../../layouts/MainLayout.astro";
+import QuizCard from "../../../../../components/QuizCard.astro";
+
+const { level } = Astro.params;
+---
+
+<MainLayout title={`Quiz Aljabar - Level ${level}`}>
+  <QuizCard level={level} />
+</MainLayout>

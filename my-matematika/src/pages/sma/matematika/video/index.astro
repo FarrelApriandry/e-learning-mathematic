@@ -1,0 +1,20 @@
+---
+import MainLayout from "../../../../layouts/MainLayout.astro";
+import { videos } from '../../../../data/video';
+import VideoCard from '../../../../components/VideoCard.astro';
+import VideoModal from '../../../../components/VideoModal.astro';
+const kelasFilter = 10; // default preview, bisa parameterize
+const filtered = videos.filter(v=> v.kelas === kelasFilter);
+---
+<MainLayout title="Video Pembelajaran">
+  <section class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">Video Pembelajaran — Kelas {kelasFilter}</h1>
+    <p class="text-sm text-slate-600 mb-6">Klik card untuk menonton video di modal tanpa pindah tab.</p>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filtered.map(v => <VideoCard video={v} />)}
+    </div>
+  </section>
+
+  <VideoModal />
+</MainLayout>

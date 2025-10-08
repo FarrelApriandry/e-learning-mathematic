@@ -1,0 +1,133 @@
+---
+const { 
+  heading = 'Selamat Datang', 
+  sub = 'Belajar Matematika SMA jadi lebih interaktif', 
+  ctaText = 'Mulai Belajar', 
+  ctaHref = '/sma/matematika' 
+} = Astro.props;
+---
+
+<section class="relative overflow-hidden">
+  <!-- Background gradient -->
+  <div class="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-blue-50 animate-gradient"></div>
+
+  <!-- Floating background shapes -->
+  <div class="absolute inset-0 overflow-hidden z-0">
+    <div class="float-shape bg-blue-300 top-20 left-10 size-12 opacity-20 blur-xl" style="animation-delay: 1s"></div>
+    <div class="float-shape bg-amber-300 bottom-16 right-20 size-16 opacity-25 blur-2xl" style="animation-delay: 2s"></div>
+    <div class="float-shape bg-pink-300 top-1/3 right-1/3 size-10 opacity-30 blur-lg" style="animation-delay: 3s"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="container mx-auto px-4 py-20 relative z-10">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <!-- LEFT -->
+      <div class="space-y-6">
+        <h1 class="text-5xl font-extrabold text-slate-900 leading-tight hero-anim delay-0 drop-shadow-sm">
+          {heading}<span class="ml-2 text-amber-400">+</span>
+        </h1>
+
+        <p class="mt-4 text-lg text-slate-600 max-w-xl hero-anim delay-100">
+          {sub}
+        </p>
+
+        <div class="mt-8 flex gap-3 hero-anim delay-200">
+          <a href={ctaHref} class="btn-primary shadow-md hover:shadow-lg hover:-translate-y-0.5 transition">{ctaText}</a>
+          <a href="/sma/quiz" class="btn-ghost shadow-sm hover:shadow-md hover:-translate-y-0.5 transition">Coba Quiz Demo</a>
+        </div>
+
+        <div class="mt-10 flex items-center gap-8 hero-anim delay-300">
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-blue-400 shadow-sm animate-pulse"></div>
+            <div>
+              <div class="text-sm font-semibold">3 Video / Kelas</div>
+              <div class="text-xs text-slate-500">Materi ringkas & visual</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-amber-300 shadow-sm animate-pulse"></div>
+            <div>
+              <div class="text-sm font-semibold">Quiz Level 1–5</div>
+              <div class="text-xs text-slate-500">Progress terukur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="relative hero-anim delay-350">
+        <div class="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xs text-slate-500">Preview Video</div>
+              <div class="mt-3 font-semibold text-slate-900">Bangun Ruang — Kelas 10</div>
+              <div class="mt-2 text-sm text-slate-600">3:20 • Visual explanation</div>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white shadow-md hover:scale-110 transition-transform">▶</div>
+              <div class="mt-2 text-xs text-slate-500">Play</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
+            <div class="text-sm font-medium text-slate-900">Aljabar</div>
+            <div class="text-xs text-slate-500 mt-1">Persamaan & fungsi</div>
+          </div>
+          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
+            <div class="text-sm font-medium text-slate-900">Geometri</div>
+            <div class="text-xs text-slate-500 mt-1">Bentuk & ruang</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Floating geometric shapes */
+    .float-shape {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatAnim 10s ease-in-out infinite;
+      will-change: transform;
+    }
+
+    @keyframes floatAnim {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      50% {
+        transform: translateY(-25px) rotate(10deg) scale(1.05);
+      }
+    }
+
+    /* Gradient background animation */
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animate-gradient {
+      background-size: 200% 200%;
+      animation: gradientMove 12s ease infinite;
+    }
+
+    /* Fade Up Animation */
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-anim {
+      opacity: 0;
+      transform: translateY(20px);
+      animation-fill-mode: forwards;
+    }
+    .hero-anim.delay-0 { animation: heroFadeUp .8s ease .0s both; }
+    .hero-anim.delay-100 { animation: heroFadeUp .8s ease .1s both; }
+    .hero-anim.delay-200 { animation: heroFadeUp .8s ease .2s both; }
+    .hero-anim.delay-300 { animation: heroFadeUp .8s ease .3s both; }
+    .hero-anim.delay-350 { animation: heroFadeUp 1s cubic-bezier(.2,.9,.3,1) .35s both; }
+  </style>
+</section>

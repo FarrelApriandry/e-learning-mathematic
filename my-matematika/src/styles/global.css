@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens */
+:root{
+  --bg: #f8fbff;
+  --primary: #2563eb;    /* blue-600 */
+  --primary-600: #1e40af;/* blue-800 */
+  --accent: #f59e0b;     /* amber-500 */
+  --muted: #64748b;      /* slate-500 */
+  --card: #ffffff;
+  --glass: rgba(255,255,255,0.6);
+}
+
+/* Base */
+html,body,#__astro {
+  height:100%;
+}
+body{
+  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+  color: #0f172a;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Utility-ish helpers */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-white font-semibold shadow-md;
+  background: linear-gradient(90deg,var(--primary),var(--primary-600));
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(37,99,235,0.18); }
+
+.btn-ghost {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border;
+  border-color: rgba(15,23,42,0.06);
+  background: rgba(255,255,255,0.7);
+}
+
+/* Card */
+.card-glass {
+  @apply rounded-2xl p-6 shadow-lg bg-white/60 backdrop-blur-sm border;
+  border-color: rgba(15,23,42,0.05);
+}
+.card {
+  @apply rounded-2xl p-6 bg-white shadow transition-transform;
+}
+.card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(2,6,23,0.08); }
+
+/* Headings */
+.h1 {
+  @apply text-4xl md:text-5xl font-extrabold leading-tight;
+}
+
+/* Small helpers for hero dots/decors */
+.hero-dot {
+  width: 12px; height:12px; border-radius:9999px;
+  box-shadow: 0 6px 18px rgba(37,99,235,0.12);
+}
+
+/* Responsive tweaks for iframe (pdf viewer) */
+.pdf-frame {
+  @apply w-full border-none rounded-b-2xl;
+}
+
+/* Accessibility focus */
+:focus {
+  outline: 3px solid rgba(37,99,235,0.18);
+  outline-offset: 3px;
+}
