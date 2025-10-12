@@ -1,6 +1,7 @@
 ---
 const { 
   heading = 'Selamat Datang', 
+  second_heading = 'E-Learning',
   sub = 'Belajar Matematika SMA jadi lebih interaktif', 
   ctaText = 'Mulai Belajar', 
   ctaHref = '/sma/matematika' 
@@ -24,7 +25,7 @@ const {
       <!-- LEFT -->
       <div class="space-y-6">
         <h1 class="text-5xl font-extrabold text-slate-900 leading-tight hero-anim delay-0 drop-shadow-sm">
-          {heading}<span class="ml-2 text-amber-400">+</span>
+          {heading}<span class="ml-2 text-amber-400"> + </span>{second_heading}
         </h1>
 
         <p class="mt-4 text-lg text-slate-600 max-w-xl hero-anim delay-100">
@@ -33,7 +34,7 @@ const {
 
         <div class="mt-8 flex gap-3 hero-anim delay-200">
           <a href={ctaHref} class="btn-primary shadow-md hover:shadow-lg hover:-translate-y-0.5 transition">{ctaText}</a>
-          <a href="/sma/quiz" class="btn-ghost shadow-sm hover:shadow-md hover:-translate-y-0.5 transition">Coba Quiz Demo</a>
+          <a href="/sma/kelas/demo/quiz/" class="btn-ghost shadow-sm hover:shadow-md hover:-translate-y-0.5 transition">Coba Quiz Demo</a>
         </div>
 
         <div class="mt-10 flex items-center gap-8 hero-anim delay-300">

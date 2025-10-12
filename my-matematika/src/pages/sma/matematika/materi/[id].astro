@@ -1,0 +1,80 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../../../layouts/MainLayout.astro";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../../lib/firebaseConfig";
+
+const id = String(Astro.params.id ?? "");
+
+let materi: Record<string, any> | null = null;
+
+try {
+    if (!db) {
+        throw new Error("Firestore (db) belum terinisialisasi. Pastikan import path benar (firebaseConfig).");
+    }
+
+    if (!id) {
+        throw new Error("ID materi tidak tersedia di URL.");
+    }
+
+    const docRef = doc(db, "materi", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        materi = { id: docSnap.id, ...(docSnap.data() ?? {}) };
+    } else {
+        materi = null;
+    }
+    } catch (error) {
+    console.error("Error loading materi:", error);
+    materi = null;
+}
+---
+
+<BaseLayout>
+    <div class="px-6 py-16 max-w-3xl mx-auto text-center">
+        {materi ? (
+        <>
+            <h1 class="text-3xl font-bold text-blue-600 mb-6">{materi.title}</h1>
+    
+            {materi.link ? (
+            <div class="aspect-video mb-6">
+                <iframe
+                class="w-full h-full rounded-xl shadow"
+                src={String(materi.link).includes("watch?v=")
+                    ? String(materi.link).replace("watch?v=", "embed/")
+                    : String(materi.link)}
+                frameborder="2"
+                allowfullscreen
+                ></iframe>
+            </div>
+            ) : null}
+    
+            <p class="text-gray-600 mb-6">{materi.description}</p>
+    
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+            {materi.pdf ? (
+                <a
+                href={materi.pdf}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                >
+                Download Materi (PDF)
+                </a>
+            ) : null}
+    
+            <a
+                href={`/sma/matematika/quiz/${materi.id ?? id}`}
+                class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
+            >
+                Mulai Quiz
+            </a>
+            </div>
+        </>
+        ) : (
+        <p class="text-gray-500 text-center">Materi tidak ditemukan.</p>
+        )}
+    </div>
+</BaseLayout>

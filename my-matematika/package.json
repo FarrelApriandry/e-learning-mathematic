@@ -10,9 +10,11 @@
     "tailwind": "node ./node_modules/tailwindcss/lib/cli.js"
   },
   "dependencies": {
+    "@astrojs/node": "^9.4.6",
     "@astrojs/react": "^4.4.0",
     "@astrojs/tailwind": "^6.0.2",
     "astro": "^5.14.1",
+    "firebase": "^12.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

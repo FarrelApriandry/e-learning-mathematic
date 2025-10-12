@@ -47,7 +47,7 @@ body{
 .card {
   @apply rounded-2xl p-6 bg-white shadow transition-transform;
 }
-.card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(2,6,23,0.08); }
+.card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(2,6,23,0.07); -webkit-transform: translateY(-4px); -moz-transform: translateY(-4px); -ms-transform: translateY(-4px); -o-transform: translateY(-4px); }
 
 /* Headings */
 .h1 {

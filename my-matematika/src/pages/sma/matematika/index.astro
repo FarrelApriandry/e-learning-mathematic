@@ -1,21 +1,26 @@
 ---
 import BaseLayout from "../../../layouts/MainLayout.astro";
 import CardTopic from "../../../components/CardTopic.astro";
+import { getMateri } from "../../../lib/get-materi";
 
-const materiList = [
-  { title: "Aljabar", description: "Pahami konsep dasar dan operasi aljabar.", link: "/sma/matematika/aljabar" },
-  { title: "Trigonometri", description: "Pelajari hubungan antar sudut dan sisi segitiga.", link: "#" },
-  { title: "Geometri", description: "Mengenal bentuk, ukuran, dan posisi ruang.", link: "#" },
-];
+const materiList = await getMateri();
 ---
 
 <BaseLayout>
   <div class="px-4 py-16">
     <h1 class="text-2xl font-bold text-blue-600 mb-6 text-center">Materi Matematika SMA</h1>
-    <div class="grid mx-auto sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {materiList.map((m) => (
-        <CardTopic title={m.title} description={m.description} link={m.link} />
-      ))}
-    </div>
+    <div class="grid mx-auto sm:grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl">
+      {materiList.length > 0 ? (
+        materiList.map((m) => (
+          <CardTopic
+            title={m.title}
+            description={m.description}
+            link={`/sma/matematika/materi/${m.id}`}
+          />
+        ))
+      ) : (
+        <p class="text-gray-500 text-center col-span-3">Belum ada data materi...</p>
+      )}
+    </div>    
   </div>  
 </BaseLayout>
