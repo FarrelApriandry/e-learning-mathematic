@@ -27,5 +27,14 @@ const firebaseConfig = {
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
+let currentUser = null;
+
+_onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    console.log("[Auth] State changed:", user ? user.email : "No user");
+});
+
+export const getCurrentUser = () => currentUser;
+
 export const onAuthStateChanged = _onAuthStateChanged;
 export const signOut = _signOut;

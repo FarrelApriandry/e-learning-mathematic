@@ -1,0 +1,20 @@
+---
+// src/layouts/admin/AdminLayout.astro
+import "../../styles/global.css"
+const { title } = Astro.props;
+const pageTitle = title ? `${title} • Admin AsyikMath` : "Admin AsyikMath";
+---
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>{pageTitle}</title>
+        <meta name="description" content="Admin panel AsyikMath E-Learning" />
+    </head>
+    <body class="min-h-screen bg-[var(--bg)] font-sans text-slate-900">
+        <slot>
+
+        </slot>
+    </body>
+</html>

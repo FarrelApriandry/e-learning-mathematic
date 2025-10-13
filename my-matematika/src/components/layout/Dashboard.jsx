@@ -1,23 +1,18 @@
 // src/pages/admin/dashboard/Dashboard.jsx
-import { auth, onAuthStateChanged, signOut } from "../../../lib/firebaseConfig";
-import { useEffect } from "preact/hooks";
+import { auth, signOut } from "../../lib/firebaseConfig";
 
 const Dashboard = () => {
-    useEffect(() => {
-        const unsub = onAuthStateChanged(auth, (user) => {
-        if (!user) window.location.href = "/admin";
-        });
-        return () => unsub();
-    }, []);
 
     const handleLogout = async () => {
         try {
-        await signOut(auth);
-        window.location.href = "/admin";
+            await signOut(auth);
+            window.location.href = "/admin";
         } catch (err) {
-        console.error("Logout gagal:", err);
+            console.error("Logout gagal:", err);
         }
     };
+
+    const test = console.log("test");
 
     return (
         <div class="min-h-screen p-10 flex flex-col items-center justify-start bg-gray-50">
@@ -36,6 +31,6 @@ const Dashboard = () => {
         </section>
         </div>
     );
-};
+    };
 
 export default Dashboard;
