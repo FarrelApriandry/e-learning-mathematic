@@ -1,0 +1,9 @@
+---
+// src/pages/admin/index.astro
+import BaseLayout from "../../layouts/AdminLayout.astro";
+import Login from "./Login.jsx"; // atau .tsx jika pakai TS
+---
+
+<BaseLayout>
+    <Login client:load />
+</BaseLayout>

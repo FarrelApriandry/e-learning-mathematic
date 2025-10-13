@@ -10,11 +10,13 @@
     "tailwind": "node ./node_modules/tailwindcss/lib/cli.js"
   },
   "dependencies": {
+    "@astrojs/preact": "^4.1.1",
     "@astrojs/react": "^4.4.0",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^8.2.9",
     "astro": "^5.14.1",
     "firebase": "^12.4.0",
+    "preact": "^10.27.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

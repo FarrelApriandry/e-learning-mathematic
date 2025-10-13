@@ -1,5 +1,10 @@
 // src/lib/firebaseConfig.js
 import { initializeApp, getApps } from "firebase/app";
+import {
+    getAuth,
+    onAuthStateChanged as _onAuthStateChanged,
+    signOut as _signOut
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -19,4 +24,8 @@ const firebaseConfig = {
     app = getApps()[0];
     }
 
+export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+export const onAuthStateChanged = _onAuthStateChanged;
+export const signOut = _signOut;
