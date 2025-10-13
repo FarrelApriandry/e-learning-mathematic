@@ -72,7 +72,7 @@ const Login = () => {
 
             {/* RIGHT: ILLUSTRATION */}
             <div class="hidden md:flex flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 items-center justify-center p-8">
-            <img src="/public/illustrations/adm-login_illustration.svg" alt="Login Illustration" class="w-3/4 max-w-lg animate-slide-in-left" />
+            <img src="\public\illustrations\adm-login_Illustration.svg" alt="Login Illustration" class="w-3/4 max-w-lg animate-slide-in-left" />
             </div>
         </div>
 
