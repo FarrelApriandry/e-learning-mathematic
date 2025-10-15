@@ -1,17 +1,17 @@
-// src/lib/getMateriServer.js
-// Server-side helper (uses firebase-admin)
 import admin from "firebase-admin";
-import fs from "node:fs";
 
-// If you prefer JSON import, use assert/import technique. Using fs is more robust for some bundlers.
-const keyPath = new URL("./serviceAccountKey.json", import.meta.url);
-const serviceAccount = JSON.parse(fs.readFileSync(keyPath, "utf8"));
+const keyPath = {
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    privateKey: process.env.PUBLIC_FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    clientEmail: process.env.PUBLIC_FIREBASE_CLIENT_EMAIL,
+};
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(keyPath),
   });
 }
+
 const db = admin.firestore();
 
 /**

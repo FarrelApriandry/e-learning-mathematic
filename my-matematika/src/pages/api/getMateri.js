@@ -1,14 +1,15 @@
 // src/pages/api/getMateri.js
 import admin from "firebase-admin";
-import fs from "node:fs";
 
-const serviceAccount = JSON.parse(
-    fs.readFileSync(new URL("../../lib/serviceAccountKey.json", import.meta.url))
-);
+const keyPath = {
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    privateKey: process.env.PUBLIC_FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    clientEmail: process.env.PUBLIC_FIREBASE_CLIENT_EMAIL,
+};
 
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+        credential: admin.credential.cert(keyPath),
     });
 }
 
