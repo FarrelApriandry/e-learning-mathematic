@@ -1,49 +1,44 @@
-// src/components/layout/Navbar.jsx
-import { useState, useEffect } from "react";
+import { UserCircle2, Menu } from "lucide-react";
+import { useEffect, useState } from "react";
 import { getCurrentUser } from "../../lib/firebaseConfig";
-import { UserCircle2 } from "lucide-react"; // icon admin abu-abu
 
 export default function Navbar() {
-    const [userEmail, setUserEmail] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
 
-    useEffect(() => {
-        const u = getCurrentUser ? getCurrentUser() : null;
-        if (u) setUserEmail(u.email);
-    }, []);
+  useEffect(() => {
+    const u = getCurrentUser ? getCurrentUser() : null;
+    if (u) setUserEmail(u.email);
+  }, []);
 
-    return (
-        <header className="px-6 w-full border-b border-gray-100 bg-white/60 backdrop-blur-sm">
-        <div className="mx-auto px-4 py-3 flex items-center justify-between">
-            {/* Kiri: Judul halaman */}
-            <div className="flex items-center gap-4">
-            <button
-                id="sidebar-open"
-                className="md:hidden p-2 rounded-md hover:bg-slate-100"
-                aria-label="Open menu"
-            >
-                <svg
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                >
-                <path d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-            <div className="text-sm text-slate-600 font-medium">Dashboard</div>
-            </div>
-    
-            {/* Kanan: Info admin */}
-            <div className="flex items-center gap-3">
-            <div className="text-right">
-                <div className="text-sm font-medium text-slate-700">
-                {userEmail ?? "admin@email.com"}
-                </div>
-                <div className="text-xs text-green-600 font-semibold">Active</div>
-            </div>
-            <UserCircle2 className="w-8 h-8 text-slate-400" strokeWidth={1.5} />
-            </div>
+  const handleToggle = () => {
+    // broadcast event for sidebar toggle
+    window.dispatchEvent(new CustomEvent("toggle-sidebar"));
+  };
+
+  return (
+    <header className="w-full border-b border-gray-100 bg-white/70 backdrop-blur-md sticky top-0 z-30">
+      <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleToggle}
+            className="md:hidden p-2 rounded-md hover:bg-slate-100 transition"
+            aria-label="Open sidebar"
+          >
+            <Menu className="w-6 h-6 text-slate-700" />
+          </button>
+          <span className="text-sm font-semibold text-slate-700">Dashboard</span>
         </div>
-        </header>
-    );
+
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <div className="text-sm font-medium text-slate-800">
+              {userEmail ?? "admin@email.com"}
+            </div>
+            <div className="text-xs text-green-600 font-semibold">Active</div>
+          </div>
+          <UserCircle2 className="w-8 h-8 text-slate-400" strokeWidth={1.5} />
+        </div>
+      </div>
+    </header>
+  );
 }
