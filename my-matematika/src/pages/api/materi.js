@@ -1,6 +1,5 @@
 // src/pages/api/materi.js
 import admin from "firebase-admin";
-import fs from 'fs';
 // import serviceAccount from "../../lib/serviceAccountKey.json" assert { type: "json" };
 
 const serviceAccount = JSON.parse(
