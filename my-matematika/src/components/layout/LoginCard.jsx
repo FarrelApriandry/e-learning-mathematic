@@ -16,7 +16,7 @@ const Login = () => {
             if (user && !window._redirecting) {
                 window._redirecting = true;
                 setTimeout(() => {
-                    window.location.href = "/admin/dashboard/dashboard";
+                    window.location.href = "/admin/dashboard/";
                 }, 1600); // delay 1.6 detik agar toast muncul
             }
         });

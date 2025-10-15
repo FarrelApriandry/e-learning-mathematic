@@ -4,26 +4,29 @@ import "../../styles/global.css";
 import Sidebar from "../../components/layout/Sidebar.jsx";
 import Navbar from "../../components/layout/Navbar.jsx";
 import AdminLayout from "./AdminLayout.astro";
+import ProtectedRoute from "../../components/ProtectedRoute.jsx"
 
 const { title, children } = Astro.props;
 ---
 <AdminLayout title={title}>
-    <div class="min-h-screen flex">
-        <!-- Sidebar (client:load for toggle) -->
-        <Sidebar client:load />
+    <ProtectedRoute client:load>
+        <div class="min-h-screen flex">
+            <!-- Sidebar (client:load for toggle) -->
+            <Sidebar client:load />
 
-        <div class="flex-1 flex flex-col">
-        <!-- Top navbar -->
-        <Navbar client:load />
+            <div class="flex-1 flex flex-col">
+            <!-- Top navbar -->
+            <Navbar client:load />
 
-        <!-- Content area -->
-        <main class="p-6 md:p-8">
-            <div class="max-w-7xl mx-auto">
-            <slot>
-                
-            </slot>
+            <!-- Content area -->
+            <main class="p-6 md:py-8 md:px-0">
+                <div class="max-w-screen-2xl mx-auto">
+                    <slot>
+                        
+                    </slot>
+                </div>
+            </main>
             </div>
-        </main>
         </div>
-    </div>
+    </ProtectedRoute>
 </AdminLayout>

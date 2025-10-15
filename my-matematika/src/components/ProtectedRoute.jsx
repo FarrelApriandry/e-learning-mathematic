@@ -1,5 +1,5 @@
 // src/components/ProtectedRoute.jsx
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import { auth, onAuthStateChanged } from "../lib/firebaseConfig";
 
 export default function ProtectedRoute({ children }) {
@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }) {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
         if (!currentUser) {
-            window.location.href = "/admin/login";
+            window.location.href = "/admin/";
         } else {
             setUser(currentUser);
         }

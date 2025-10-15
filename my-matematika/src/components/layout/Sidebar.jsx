@@ -1,55 +1,123 @@
-// src/components/layout/Sidebar.jsx
-import { useState } from "react";
-// import { Link } from "@astrojs/preact/client";
+import { useState, useEffect } from "react";
+import { LayoutDashboard, BookCopy, ScrollText, CalendarClock, Bolt, Menu, X} from "lucide-react";
 
 export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
+    const [activePath, setActivePath] = useState(""); 
+
+    useEffect(() => {
+        setActivePath(window.location.pathname);
+    }, []);
+
+    const linkBase =
+        "flex items-center gap-3 rounded-lg transition-all duration-200";
+    const hover =
+        "hover:bg-blue-500/40 hover:text-white hover:scale-[1.02] active:scale-100";
+
+        const isActive = (path) => activePath === path;
 
     return (
-        <aside class={`bg-white/70 backdrop-blur-sm border-r border-gray-100 p-4 transition-all duration-300 ${collapsed ? "w-16" : "w-64"}`}>
-        <div class="flex items-center justify-between mb-6">
-            <a href="/admin/dashboard/dashboard" class={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
-            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">A+</div>
-                {!collapsed && <div class="text-sm font-semibold">Asyik Math</div>}
-            </a>
+        <aside
+        class={`bg-blue-600 backdrop-blur-sm border-r border-blue-700 p-4 transition-all duration-300 ${
+            collapsed ? "w-16" : "w-64"
+        }`}
+        >
+            {/* HEADER */}
+            <div class="flex items-center justify-between">
+                <a
+                href="/admin/dashboard/"
+                class={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "justify-center hidden" : ""}`}
+                >
+                <div class={`rounded-lg bg-gradient-to-br from-blue-400 to-indigo-400 flex items-center justify-center text-white font-bold ${collapsed ? "hidden" : "w-9 h-9"}`}>
+                    A+
+                </div>
+                {!collapsed && (
+                    <div class="text-sm font-semibold text-white">Asyik Math</div>
+                )}
+                </a>
 
-            <button
-            onClick={() => setCollapsed(!collapsed)}
-            class="p-2 rounded-md hover:bg-slate-100"
-            aria-label="Toggle sidebar"
-            >
-            <svg class="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={collapsed ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-            </button>
-        </div>
+                <button
+                onClick={() => setCollapsed(!collapsed)}
+                class={`${collapsed ? "py-2 p-0" : "p-2"} rounded-md hover:bg-blue-500/30 text-blue-100`}
+                aria-label="Toggle sidebar"
+                >
+                {collapsed ? (
+                    <X className="w-6 h-6 text-blue-100" strokeWidth={2} />       
+                ) : (
+                    <Menu className="w-6 h-6 text-blue-100" strokeWidth={2} />
+                )}
+                </button>
+            </div>
 
-        <nav class="flex flex-col gap-1">
-            <a href="/admin/dashboard" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50">
-            <svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 13h8V3H3v10zM13 21h8V11h-8v10zM13 3v4" /></svg>
-            {!collapsed && <span class="text-sm font-medium">Dashboard</span>}
-            </a>
+            <div class="h-px w-full bg-gradient-to-r from-white/10 via-white/30 to-white/10 my-4"></div>
 
-            <a href="/admin/materi" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50">
-            <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20v-6" /></svg>
-            {!collapsed && <span class="text-sm font-medium">Materi</span>}
-            </a>
+            {/* NAVIGATION */}
+            <nav class="flex flex-col gap-1">
+                {/* Dashboard */}
+                <a
+                href="/admin/dashboard/"
+                class={`${collapsed ? "px-0 py-3" : "p-3"} ${linkBase} ${
+                    isActive("/admin/dashboard/")
+                    ? "bg-blue-500/70 text-white shadow-sm"
+                    : "text-blue-100"
+                } ${hover}`}
+                >
+                <LayoutDashboard className="w-5 h-5" strokeWidth={2} />
+                {!collapsed && <span class="text-sm font-medium">Dashboard</span>}
+                </a>
 
-            <a href="/admin/quiz" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50">
-            <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13" /></svg>
-            {!collapsed && <span class="text-sm font-medium">Quiz</span>}
-            </a>
+                {/* Materi */}
+                <a
+                href="/admin/materi/"
+                class={`${collapsed ? "px-0 py-3" : "p-3"} ${linkBase} ${
+                    isActive("/admin/materi/")
+                    ? "bg-blue-500/70 text-white shadow-sm"
+                    : "text-blue-100"
+                } ${hover}`}
+                >
+                <BookCopy className="w-5 h-5" strokeWidth={2} />
+                {!collapsed && <span class="text-sm font-medium">Materi</span>}
+                </a>
 
-            <a href="/admin/event" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50">
-            <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 10l5 5 5-5" /></svg>
-            {!collapsed && <span class="text-sm font-medium">Quiz Event</span>}
-            </a>
+                {/* Quiz */}
+                <a
+                href="/admin/quiz/"
+                class={`${collapsed ? "px-0 py-3" : "p-3"} ${linkBase} ${
+                    isActive("/admin/quiz/")
+                    ? "bg-blue-500/70 text-white shadow-sm"
+                    : "text-blue-100"
+                } ${hover}`}
+                >
+                <ScrollText className="w-5 h-5" strokeWidth={2} />
+                {!collapsed && <span class="text-sm font-medium">Quiz</span>}
+                </a>
 
-            <a href="/admin/settings" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 mt-4">
-            <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15l9-5-9-5-9 5 9 5z"/></svg>
-            {!collapsed && <span class="text-sm font-medium">Settings</span>}
-            </a>
-        </nav>
+                {/* Event */}
+                <a
+                href="/admin/event/"
+                class={`${collapsed ? "px-0 py-3" : "p-3"} ${linkBase} ${
+                    isActive("/admin/event/")
+                    ? "bg-blue-500/70 text-white shadow-sm"
+                    : "text-blue-100"
+                } ${hover}`}
+                >
+                <CalendarClock className="w-5 h-5" strokeWidth={2} />
+                {!collapsed && <span class="text-sm font-medium">Quiz Event</span>}
+                </a>
+
+                {/* Settings */}
+                <a
+                href="/admin/settings/"
+                class={`${collapsed ? "px-0 py-3" : "p-3"} ${linkBase} ${
+                    isActive("/admin/settings/")
+                    ? "bg-blue-500/70 text-white shadow-sm"
+                    : "text-blue-100"
+                } ${hover}`}
+                >
+                <Bolt className="w-5 h-5" strokeWidth={2} />
+                {!collapsed && <span class="text-sm font-medium">Settings</span>}
+                </a>
+            </nav>
         </aside>
     );
 }

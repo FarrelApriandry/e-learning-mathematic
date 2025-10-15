@@ -4,21 +4,22 @@ export const prerender = false;
 import BaseLayout from "../../../../layouts/MainLayout.astro";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../lib/firebaseConfig";
+import {Download, ScrollText} from "lucide-react";
 
 const id = String(Astro.params.id ?? "");
 
 let materi: Record<string, any> | null = null;
 
 try {
-    if (!db) throw new Error("Firestore belum terinisialisasi.");
-    if (!id) throw new Error("ID materi tidak tersedia di URL.");
+        if (!db) throw new Error("Firestore belum terinisialisasi.");
+        if (!id) throw new Error("ID materi tidak tersedia di URL.");
 
-    const docRef = doc(db, "materi", id);
-    const docSnap = await getDoc(docRef);
+        const docRef = doc(db, "materi", id);
+        const docSnap = await getDoc(docRef);
 
-    materi = docSnap.exists() ? { id: docSnap.id, ...(docSnap.data() ?? {}) } : null;
+        materi = docSnap.exists() ? { id: docSnap.id, ...(docSnap.data() ?? {}) } : null;
     } catch (error) {
-    console.error("Error loading materi:", error);
+        console.error("Error loading materi:", error);
     materi = null;
 }
 ---
@@ -30,12 +31,12 @@ try {
             <>
             <!-- VIDEO PLAYER -->
             <div class="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-lg">
-                {materi.link ? (
+                {materi.youtube_link ? (
                 <iframe
                     class="w-full h-full"
-                    src={String(materi.link).includes("watch?v=")
-                    ? String(materi.link).replace("watch?v=", "embed/")
-                    : String(materi.link)}
+                    src={String(materi.youtube_link).includes("watch?v=")
+                    ? String(materi.youtube_link).replace("watch?v=", "embed/")
+                    : String(materi.youtube_link)}
                     frameborder="0"
                     allowfullscreen
                 ></iframe>
@@ -48,51 +49,54 @@ try {
 
             <!-- VIDEO INFO (GRID: LEFT = content, RIGHT = buttons) -->
             <article class="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
-                <div class="grid grid-cols-5 gap-4 items-start">
-                <!-- LEFT: title + subtitle + description -->
-                <div class="col-span-4">
-                    <h1 class="text-lg md:text-3xl font-bold text-gray-800 leading-tight">
-                    {materi.title}
-                    </h1>
+                <div class="grid grid-cols-5 md:grid-cols-5 gap-4 items-start">
+                    <!-- LEFT: title + subtitle + description -->
+                    <div class="col-span-3 md:col-span-4">
+                        <h1 class="text-lg md:text-3xl font-bold text-gray-800 leading-tight">
+                        {materi.title}
+                        </h1>
 
-                    <p class="text-gray-500 text-xs md:text-sm mt-1">
-                    Pelajari konsep ini dengan video interaktif dan latihan soal yang seru!
-                    </p>
+                        <p class="text-gray-500 text-xs md:text-sm mt-1">
+                        Pelajari konsep ini dengan video interaktif dan latihan soal yang seru!
+                        </p>
 
-                    <div class="mt-3 border-t pt-3">
-                    <h2 class="font-semibold text-sm md:text-lg text-gray-800 mb-2">Deskripsi</h2>
-                    <p class="text-sm md:text-base text-gray-700 leading-relaxed">{materi.description}</p>
+                        <div class="mt-3 border-t pt-3">
+                            <h2 class="font-semibold text-sm md:text-lg text-gray-800">Deskripsi</h2>
+                            <p class="mt-1 text-xs md:text-base text-gray-500 hover:text-gray-600 md:text-gray-400">{materi.description}</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- RIGHT: buttons (stacked) -->
-                <div class="col-span-1 flex flex-col items-end gap-2">
-                    {materi.pdf ? (
-                    <a
-                        href={materi.pdf}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-shadow shadow-sm"
-                        aria-label="Download PDF"
-                    >
-                        📘 PDF
-                    </a>
-                    ) : null}
-
-                    <a
-                    href={`/sma/matematika/quiz/${materi.id ?? id}`}
-                    class="inline-flex items-center justify-center px-3 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-shadow shadow-sm"
-                    aria-label="Mulai Quiz"
-                    >
-                    🧩 Quiz
-                    </a>
-                </div>
+                    <!-- RIGHT: buttons (stacked) -->
+                    <div class="col-span-2 md:col-span-1 flex flex-col items-end gap-2">
+                        {materi.pdf_link ? (
+                        <a
+                            href={materi.pdf_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="gap-1 inline-flex items-center justify-center w-[60px] md:w-[80px] px-1 py-2 md:px-3 md:py-2 bg-blue-600 text-white text-xs md:text-sm font-normal rounded-lg hover:bg-blue-700 transition-shadow shadow-sm"
+                            aria-label="Download PDF"
+                        >
+                        <Download className="w-3 h-3 md:w-5 md:h-5 dark:text-gray-100" strokeWidth={2} />
+                            PDF
+                        </a>
+                        ) : null}
+                        <a
+                            href={`/sma/matematika/quiz/${materi.id ?? id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="gap-1 inline-flex items-center justify-center w-[60px] md:w-[80px] px-1 py-2 md:px-3 md:py-2 bg-green-600 text-white text-xs md:text-sm font-normal rounded-lg hover:bg-green-700 transition-shadow shadow-sm"
+                            aria-label="Mulai Quiz"
+                        >
+                        <ScrollText className="w-3 h-3 md:w-5 md:h-5 dark:text-gray-100" strokeWidth={2} />
+                            Quiz
+                        </a>
+                    </div>
                 </div>
             </article>
             </>
         ) : (
             <div class="p-16 text-center text-gray-500 text-lg bg-white rounded-xl shadow-sm">
-            Materi tidak ditemukan atau sedang tidak tersedia.
+                Materi tidak ditemukan atau sedang tidak tersedia.
             </div>
         )}
         </div>

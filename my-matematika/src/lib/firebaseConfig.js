@@ -19,9 +19,9 @@ const firebaseConfig = {
 
     let app;
     if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
+        app = initializeApp(firebaseConfig);
     } else {
-    app = getApps()[0];
+        app = getApps()[0];
     }
 
 export const auth = getAuth(app);
@@ -38,3 +38,14 @@ export const getCurrentUser = () => currentUser;
 
 export const onAuthStateChanged = _onAuthStateChanged;
 export const signOut = _signOut;
+
+export async function GET() {
+    try {
+        const snapshot = await getDocs(collection(db, "materi"));
+        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        return new Response(JSON.stringify(data), { status: 200 });
+    } catch (err) {
+        console.error(err);
+        return new Response(JSON.stringify([]), { status: 500 });
+    }
+}
