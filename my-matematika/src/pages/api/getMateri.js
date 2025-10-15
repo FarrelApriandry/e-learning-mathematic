@@ -1,6 +1,6 @@
 // src/pages/api/getMateri.js
 import admin from "firebase-admin";
-import fs from "fs";
+import fs from "node:fs";
 
 const serviceAccount = JSON.parse(
     fs.readFileSync(new URL("../../lib/serviceAccountKey.json", import.meta.url))

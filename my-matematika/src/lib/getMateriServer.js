@@ -1,7 +1,7 @@
 // src/lib/getMateriServer.js
 // Server-side helper (uses firebase-admin)
 import admin from "firebase-admin";
-import fs from "fs";
+import fs from "node:fs";
 
 // If you prefer JSON import, use assert/import technique. Using fs is more robust for some bundlers.
 const keyPath = new URL("./serviceAccountKey.json", import.meta.url);
