@@ -6,7 +6,7 @@ export async function getMateri() {
     if (json.success) return json.data;
     return [];
   } catch (err) {
-    console.error("Error fetching materi:", err);
+      console.error("Error fetching materi:", err);
     return [];
   }
 }

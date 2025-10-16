@@ -2,8 +2,8 @@ import admin from "firebase-admin";
 
 const keyPath = {
     projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-    privateKey: process.env.PUBLIC_FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    clientEmail: process.env.PUBLIC_FIREBASE_CLIENT_EMAIL,
+    clientEmail: import.meta.env.PUBLIC_FIREBASE_CLIENT_EMAIL,
+    privateKey: import.meta.env.PUBLIC_FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
 };
 
 if (!admin.apps.length) {
