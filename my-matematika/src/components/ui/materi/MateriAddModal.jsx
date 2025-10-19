@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, BookPlus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
-import AlertToast from "../ui/AlertToast.jsx";
+import AlertToast from "../AlertToast.jsx";
 
 // Helper buat ubah ke Title Case
 function toTitleCase(str) {
@@ -95,7 +95,7 @@ export default function MateriAddModal({ open, setOpen }) {
         createPortal(
           <AnimatePresence>
             <motion.div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999]"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[500]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -107,7 +107,7 @@ export default function MateriAddModal({ open, setOpen }) {
                 exit={{ scale: 0.95, opacity: 0 }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <BookPlus className="w-6 h-6 dark:text-gray-100" strokeWidth={1.5} />
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                       Tambah Materi Baru
@@ -236,7 +236,7 @@ export default function MateriAddModal({ open, setOpen }) {
                         className="w-full h-[42px] px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                         required
                       >
-                        <option class="hidden" value="">Pilih Materi</option>
+                        <option className="hidden" value="">Pilih Materi</option>
                         {materiList.map((m) => (
                           <option key={m} value={m}>
                             {m}

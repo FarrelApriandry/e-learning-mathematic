@@ -9,6 +9,7 @@ import {
   Bolt,
   X,
   LogOut,
+  Globe,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -32,8 +33,9 @@ export default function Sidebar() {
   const navItems = [
     { icon: LayoutDashboard, text: "Dashboard", path: "/admin/dashboard/" },
     { icon: BookCopy, text: "Materi", path: "/admin/materi/" },
-    { icon: ScrollText, text: "Quiz", path: "/admin/quiz/" },
-    { icon: CalendarClock, text: "Quiz Event", path: "/admin/event/" },
+    { icon: ScrollText, text: "Quiz Materi", path: "/admin/quiz_materi/" },
+    { icon: Globe, text: "Quiz Global", path: "/admin/quiz_global/" },
+    { icon: CalendarClock, text: "Quiz Event", path: "/admin/quiz_event/" },
     { icon: Bolt, text: "Settings", path: "/admin/settings/" },
   ];
 
@@ -78,10 +80,12 @@ export default function Sidebar() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -250, opacity: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 100 }}
-            className="fixed md:static top-0 left-0 h-screen md:h-auto z-50 
-                       bg-gradient-to-b from-blue-600 to-indigo-700 
-                       text-white border-r border-blue-700/50 p-5 w-64
-                       shadow-xl shadow-blue-900/30 flex flex-col justify-between"
+            className="
+              fixed md:static top-0 left-0 h-screen md:h-auto z-50 
+              bg-gradient-to-b from-blue-600 to-indigo-700 
+              text-white border-r border-blue-700/50 p-5 w-64
+              shadow-xl shadow-blue-900/30 flex flex-col justify-between
+            "
           >
             {/* Top: Logo & Nav */}
             <div>

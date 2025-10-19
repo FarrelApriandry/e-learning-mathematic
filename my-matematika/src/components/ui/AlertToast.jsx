@@ -15,7 +15,7 @@ const IconError = ({className=""}) => (
 const AlertToast = ({ type = "success", message = "" }) => {
     const bg = type === "success" ? "bg-green-500" : "bg-red-500";
     return (
-    <div class={`fixed top-6 right-6 px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-white z-50 ${bg} animate-toast-in`}>
+    <div class={`fixed top-6 right-6 px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-white z-[9999] ${bg} animate-toast-in`}>
         {type === "success" ? <IconCheck className="w-5 h-5" /> : <IconError className="w-5 h-5" />}
         <span class="font-medium">{message}</span>
     </div>

@@ -1,9 +1,27 @@
 import { UserCircle2, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../../lib/firebaseConfig";
+// import { useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const [userEmail, setUserEmail] = useState(null);
+
+  // // const pageName = window.location.pathname.split("/")[1] || "home";
+  // const location = useLocation();
+  // const [currentPage, setCurrentPage] = useState("");
+
+  // useEffect(() => {
+  //   setCurrentPage(location.pathname.split("/")[1] || "home");
+  // }, [location.pathname]);
+
+  // const pageName = window.location.pathname.split("/")[1] || "home";
+  const pathParts =
+  typeof window !== "undefined"
+    ? window.location.pathname.split("/").filter(Boolean) // hapus elemen kosong
+    : [];
+
+  const parentPage = pathParts[0] ? pathParts[0].charAt(0).toUpperCase() + pathParts[0].slice(1) : "Home";
+  const currentPage = pathParts[1] ? pathParts[1].charAt(0).toUpperCase() + pathParts[1].slice(1) : "HOME";
 
   useEffect(() => {
     const u = getCurrentUser ? getCurrentUser() : null;
@@ -26,7 +44,7 @@ export default function Navbar() {
           >
             <Menu className="w-6 h-6 text-slate-700" />
           </button>
-          <span className="text-sm font-semibold text-slate-700">Dashboard</span>
+          <span className="text-sm font-semibold text-slate-700">{currentPage}</span>
         </div>
 
         <div className="flex items-center gap-3">
