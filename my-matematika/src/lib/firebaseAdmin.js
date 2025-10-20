@@ -1,11 +1,16 @@
-// server/firebaseAdmin.js
 import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
+
+const keyPath = {
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    privateKey: import.meta.env.PUBLIC_FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    clientEmail: import.meta.env.PUBLIC_FIREBASE_CLIENT_EMAIL,
+    };
 
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
+    admin.initializeApp({ credential: admin.credential.cert(keyPath) });
 }
 
-export default admin;
+const db = admin.firestore();
+
+export { db };
+export { admin };
