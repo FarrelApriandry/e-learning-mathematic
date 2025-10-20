@@ -68,8 +68,8 @@ export default function QuizGlobalFormModal({ isOpen, onClose, onSuccess }) {
       onSuccess?.();
       onClose();
     } catch (err) {
-      console.error("Error adding quiz:", err);
-      alert("Gagal menambahkan quiz. Coba lagi!");
+        console.error("Error adding quiz:", err);
+        alert("Gagal menambahkan quiz. Coba lagi!");
     } finally {
       setLoading(false);
     }

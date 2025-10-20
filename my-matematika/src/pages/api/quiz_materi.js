@@ -39,12 +39,12 @@ export async function POST({ request }) {
         const body = await request.json();
 
         const payload = {
-        title: body.title,
-        related_materi: body.related_materi,
-        is_public: false,
-        questions: body.questions || [],
-        created_at: admin.firestore.FieldValue.serverTimestamp(),
-        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            title: body.title,
+            related_materi: body.related_materi,
+            is_public: false,
+            questions: body.questions || [],
+            created_at: admin.firestore.FieldValue.serverTimestamp(),
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
         };
 
         await db.collection("quiz_materi").add(payload);

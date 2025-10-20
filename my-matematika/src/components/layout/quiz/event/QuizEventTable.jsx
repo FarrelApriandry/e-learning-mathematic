@@ -4,6 +4,7 @@ import { Check, Trash2, Eye, Pencil } from "lucide-react";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import { Button } from "../../../ui/button";
 import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import ConfirmModal from "../../../ui/ConfirmModal";
 // import QuizEventDetailModal from "../../../ui/quiz/event/QuizEventDetailModal";
 // import QuizEventEditModal from "../../../ui/quiz/event/QuizEventEditModal";
 // import ChangeStatusModal from "../../../ui/quiz/event/ChangeStatusModal";
@@ -39,6 +40,25 @@ export default function QuizEventTable() {
         };
         fetchQuiz();
     }, []);
+
+    const handleOpenConfirm = (quiz) => {
+        setSelectedQuiz(quiz);
+        setOpenConfirmModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteDoc(doc(db, "quiz_global", selectedQuiz.id));
+            setQuizList((prev) => prev.filter((item) => item.id !== selectedQuiz.id));
+            toast({ title: `Quiz "${selectedQuiz.title}" berhasil dihapus!` });
+        } catch (err) {
+            console.error("❌ Gagal menghapus quiz:", err);
+            toast({ title: "Gagal menghapus quiz", variant: "destructive" });
+        } finally {
+            setOpenConfirmModal(false);
+            setSelectedQuiz(null);
+        }
+    };
 
     // useEffect(() => {
     //     fetchEvents();
@@ -118,14 +138,16 @@ export default function QuizEventTable() {
             <table className="min-w-full text-sm text-left border-collapse">
             <thead className="bg-slate-50 border-y border-slate-200 text-slate-600 uppercase text-xs tracking-wide">
                 <tr>
-                <th className="py-3 px-5 font-semibold">Judul Event</th>
-                <th className="py-3 px-5 font-semibold">Deskripsi</th>
-                <th className="py-3 px-5 font-semibold text-center">Jumlah Soal</th>
-                <th className="py-3 px-5 font-semibold text-center">Durasi</th>
-                <th className="py-3 px-5 font-semibold text-center">Status</th>
-                <th className="py-3 px-5 font-semibold text-center">Tanggal Dibuat</th>
-                <th className="py-3 px-5 font-semibold text-center">Tanggal Diupdate</th>
-                <th className="py-3 px-5 font-semibold text-center">Aksi</th>
+                    <th className="py-3 px-5 font-semibold">Judul Event</th>
+                    <th className="py-3 px-5 font-semibold">Kode Event</th>
+                    <th className="py-3 px-5 font-semibold">Deskripsi</th>
+                    <th className="py-3 px-5 font-semibold text-center">Jumlah Soal</th>
+                    <th className="py-3 px-5 font-semibold text-center">Durasi</th>
+                    <th className="py-3 px-5 font-semibold text-center">Status</th>
+                    <th className="py-3 px-5 font-semibold text-center">Hasil</th>
+                    <th className="py-3 px-5 font-semibold text-center">Tanggal Dibuat</th>
+                    <th className="py-3 px-5 font-semibold text-center">Tanggal Diupdate</th>
+                    <th className="py-3 px-5 font-semibold text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -147,6 +169,7 @@ export default function QuizEventTable() {
                                 <p className="text-xs text-slate-400">#{quiz.id}</p>
                             </div>
                         </td>
+                        <td className="py-3 px-5 text-slate-700">{quiz.access_code || "-"}</td>
                         <td className="py-3 px-5 text-slate-700">{quiz.description || "-"}</td>
                         <td className="py-3 px-5 text-center text-slate-700">{quiz.questions?.length || 0}</td>
                         <td className="py-3 px-5 text-center text-slate-700">{quiz.duration_minutes || 0} menit</td>
@@ -172,6 +195,18 @@ export default function QuizEventTable() {
                                 : quiz.status === "ongoing"
                                 ? "Sedang Berlangsung"
                                 : "Draft"}
+                            </span>
+                        </td>
+                        <td className="px-5 py-3 text-center">
+                            <span
+                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                    quiz.status === "public"
+                                    ? "bg-green-200 text-green-700 border border-green-300 w-12"
+                                    : "bg-slate-300 text-slate-700 border border-slate-300 w-12"
+                                }`}>
+                                {quiz.status === "public"
+                                ? "Publik"
+                                : "Private"}
                             </span>
                         </td>
                         <td className="py-3 px-5 text-center text-emerald-700 whitespace-nowrap">
