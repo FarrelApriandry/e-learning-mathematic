@@ -1,43 +1,62 @@
-# Astro Starter Kit: Minimal
+# E-Learning Matematika
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Sebuah platform website e-learning sederhana yang berfokus pada pembelajaran matematika. Proyek ini saya kembangkan untuk menyediakan materi pelajaran dan kuis interaktif bagi pengguna.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+**Demo Live:** [https://farrelapriandry.github.io/e-learning-mathematic/](https://farrelapriandry.github.io/e-learning-mathematic/)
 
-## 🚀 Project Structure
+---
 
-Inside of your Astro project, you'll see the following folders and files:
+## 🚀 Fitur Utama
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+* **Materi Pembelajaran:** Menyediakan berbagai materi matematika yang mudah diakses.
+* **Kuis Interaktif:** Uji pemahaman Anda dengan fitur kuis yang langsung memberikan hasil.
+* **Desain Responsif:** Dapat diakses dengan baik di perangkat desktop maupun mobile.
+* **Navigasi Sederhana:** Antarmuka yang bersih dan mudah digunakan.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+---
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## 💻 Teknologi yang Digunakan
 
-Any static assets, like images, can be placed in the `public/` directory.
+Proyek ini dibangun murni menggunakan teknologi front-end dan back-end maksimal :
 
-## 🧞 Commands
+* **Astro.js:** Untuk struktur dan konten website.
+* **Tailwind:** Untuk styling, layout, dan desain responsif.
+* **Astro React:** Untuk fungsionalitas interaktif seperti kuis dan navigasi.
+* **Firebase:** Untuk penyimpanan dan konfigurasi data.
+* **Shadcn + Framer-Motion:** Untuk desain tampilan dan animasi.
 
-All commands are run from the root of the project, from a terminal:
+---
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## 🛠️ Instalasi & Penyiapan
 
-## 👀 Want to learn more?
+Karena ini adalah proyek front-end statis, Anda tidak memerlukan instalasi yang rumit.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+1.  **Clone repositori ini:**
+    ```sh
+    git clone [https://github.com/FarrelApriandry/e-learning-mathematic.git](https://github.com/FarrelApriandry/e-learning-mathematic.git)
+    ```
+
+2.  **Masuk ke direktori proyek:**
+    ```sh
+    cd e-learning-mathematic/my-matematika
+    ```
+
+3.  **Buka file `command line`:**
+    Cukup buka cli (cmd, powersheel, terminal, dll) lalu ketikkan `npm run dev`
+
+4.  **Akses browser `localhost:4321`:**
+    Akses website dengan menggunakan browser apapun, dan ketikkan `localhost:4321` untuk akses website.
+
+4.  **Akses admin `localhost:4321/admin`:**
+    Akses website dengan menggunakan browser apapun, dan ketikkan `localhost:4321/admin` untuk akses website.
+
+
+## 🤝 Berkontribusi
+
+Kontribusi, isu, dan permintaan fitur sangat diterima! Jangan ragu untuk [membuka isu](https://github.com/FarrelApriandry/e-learning-mathematic/issues) baru.
+
+---
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah **MIT License**. Lihat file `LICENSE` untuk detailnya.
