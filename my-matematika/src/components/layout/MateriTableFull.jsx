@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../lib/firebaseConfig";
 import { Eye, Trash2, Search, Pencil } from "lucide-react";
-import MateriAddModal from "../ui/materi/MateriAddModal.jsx";
+import MateriAddModal from "../ui/materi/MateriFormModal.jsx";
 import MateriDetailModal from "../ui/materi/MateriDetailModal.jsx";
 import ConfirmModal from "../ui/ConfirmModal.jsx";
 import MateriEditModal from "../ui/materi/MateriEditModal.jsx"

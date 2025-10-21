@@ -4,7 +4,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState, useEffect } from "react";
 import AuthCard from "../ui/AuthCard";
 import AlertToast from "../ui/AlertToast";
-import adm_login from "../../illustrations/adm-login_Illustration.svg";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -73,7 +72,7 @@ const Login = () => {
 
             {/* RIGHT: ILLUSTRATION */}
             <div class="hidden md:flex flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 items-center justify-center p-8">
-            <img src={`${adm_login}`} alt="Login Illustration" class="w-3/4 max-w-lg animate-slide-in-left" />
+            <img src="src\illustrations\adm-login_Illustration.svg" alt="Login Illustration" class="w-3/4 max-w-lg animate-slide-in-left" />
             </div>
         </div>
 

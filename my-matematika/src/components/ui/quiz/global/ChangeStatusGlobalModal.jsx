@@ -1,3 +1,4 @@
+// src\components\ui\quiz\global\ChangeStatusGlobalModal.jsx
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../dialog";

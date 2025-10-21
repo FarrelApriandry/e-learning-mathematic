@@ -5,7 +5,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
     DialogFooter,
 } from "../../dialog"
 import { Input } from "../../input"
@@ -15,9 +14,9 @@ import { Textarea } from "../../textarea"
 import { Switch } from "../../switch"
 import {
     Select,
+    SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectTrigger,
     SelectValue,
 } from "../../select"
 import { toast } from "../../../../hooks/use-toast"
@@ -37,6 +36,7 @@ export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
         max_participants: "",
     })
     const [loading, setLoading] = useState(false)
+    const [categoryMode, setCategoryMode] = useState("select")
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -131,23 +131,64 @@ export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
                     />
                 </div>
 
+                {/* ====== KATEGORI DENGAN DUAL MODE ====== */}
                 <div>
-                    <Label htmlFor="category">Kategori</Label>
+                    {/* Tombol toggle */}
+                    <div className="flex gap-2 my-1 justify-between">
+                        <Label htmlFor="category">Kategori</Label>
+                        <div className="flex gap-2 my-1">
+                            <button
+                                type="button"
+                                onClick={() => setCategoryMode("input")}
+                                className={`text-xs px-3 py-1 rounded-md border transition ${
+                                categoryMode === "input"
+                                    ? "bg-blue-100 border-blue-400 text-blue-700"
+                                    : "bg-white border-gray-300 text-gray-600 hover:bg-gray-100"
+                                }`}
+                            >
+                                Ketik
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setCategoryMode("select")}
+                                className={`text-xs px-3 py-1 rounded-md border transition ${
+                                categoryMode === "select"
+                                    ? "bg-blue-100 border-blue-400 text-blue-700"
+                                    : "bg-white border-gray-300 text-gray-600 hover:bg-gray-100"
+                                }`}
+                            >
+                                Pilih
+                            </button>
+                        </div>
+                    </div>
+
+                    {categoryMode === "select" ? (
                     <Select
-                    onValueChange={(v) =>
+                        value={formData.category}
+                        onValueChange={(v) =>
                         setFormData((prev) => ({ ...prev, category: v }))
-                    }
+                        }
                     >
-                    <SelectTrigger className="bg-gray-50 border-gray-300 focus:border-blue-400 focus:ring-blue-200">
+                        <SelectTrigger className="bg-gray-50 border-gray-300 focus:border-blue-400 focus:ring-blue-200">
                         <SelectValue placeholder="Pilih kategori" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Umum">Umum</SelectItem>
-                        <SelectItem value="Teknologi">Teknologi</SelectItem>
-                        <SelectItem value="Sejarah">Sejarah</SelectItem>
-                        <SelectItem value="Budaya">Budaya</SelectItem>
-                    </SelectContent>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Umum">Umum</SelectItem>
+                            <SelectItem value="Teknologi">Teknologi</SelectItem>
+                            <SelectItem value="Sejarah">Sejarah</SelectItem>
+                            <SelectItem value="Budaya">Budaya</SelectItem>
+                        </SelectContent>
                     </Select>
+                    ) : (
+                    <Input
+                        id="category"
+                        name="category"
+                        placeholder="Tulis kategori custom..."
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="bg-gray-50 border-gray-300 focus:border-blue-400 focus:ring-blue-200"
+                    />
+                    )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
