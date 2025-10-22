@@ -282,7 +282,8 @@ export default function QuizEventTable({ refreshTrigger, onQuestionPageToggle })
                         onClose={() => setOpenConfirmModal(false)}
                         onConfirm={handleConfirmDelete}
                         title="Konfirmasi Hapus"
-                        message={`Apakah kamu yakin ingin menghapus quiz "${selectedEvent?.title}"?`}
+                        message={`Apakah kamu yakin ingin menghapus quiz`}
+                        main={`"${selectedEvent?.title}"`}
                     />
                 </tbody>
                 </table>

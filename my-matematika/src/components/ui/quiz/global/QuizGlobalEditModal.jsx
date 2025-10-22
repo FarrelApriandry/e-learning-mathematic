@@ -1,15 +1,16 @@
 // src/components/layout/quiz/QuizGlobalEditModal.jsx
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../dialog";
 import { Input } from "../../input";
-import { Textarea } from "../../textarea";
-import { Button } from "../../button";
-import { ScrollArea } from "../../scroll-area";
 import { Label } from "../../label";
+import { Button } from "../../button";
+import { Textarea } from "../../textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../select";
+import { ScrollArea } from "../../scroll-area";
 import { motion } from "framer-motion";
 import { toast } from "../../../../hooks/use-toast";
-import { collection, getDocs, updateDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../../../lib/firebaseConfig";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { PlusCircle, Trash2 } from "lucide-react";
 
 export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate }) {
@@ -20,7 +21,7 @@ export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate })
     visibility: "draft",
     questions: [],
   });
-
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (quiz) {
@@ -35,24 +36,29 @@ export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate })
   }, [quiz]);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const [loading, setLoading] = useState(false);
-
   const handleQuestionChange = (index, field, value) => {
-    const updatedQuestions = [...formData.questions];
-    updatedQuestions[index][field] = value;
-    setFormData({ ...formData, questions: updatedQuestions });
+    const updated = [...formData.questions];
+    updated[index][field] = value;
+    setFormData({ ...formData, questions: updated });
+  };
+
+  const handleOptionChange = (qIndex, oIndex, value) => {
+    const updated = [...formData.questions];
+    updated[qIndex].options[oIndex] = value;
+    setFormData({ ...formData, questions: updated });
   };
 
   const handleAddQuestion = () => {
     setFormData((prev) => ({
       ...prev,
-      questions: [...prev.questions, { question: "", options: ["", "", "", ""], answer: "" }],
+      questions: [
+        ...prev.questions,
+        { question: "", options: ["", "", "", ""], answer: "" },
+      ],
     }));
   };
 
@@ -82,7 +88,7 @@ export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate })
         toast({ title: `Semua opsi pada soal ${i + 1} harus diisi!`, variant: "destructive" });
         return;
       }
-      if (q.answer === "" || q.answer == null || isNaN(q.answer)) {
+      if (q.answer === "" || isNaN(q.answer)) {
         toast({ title: `Pilih jawaban benar untuk soal ${i + 1}!`, variant: "destructive" });
         return;
       }
@@ -100,7 +106,7 @@ export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate })
       onUpdate?.({ ...quiz, ...formData });
       onClose();
     } catch (error) {
-      console.error("❌ Gagal update quiz:", error);
+      console.error("❌ Error update quiz:", error);
       toast({ title: "Gagal memperbarui quiz", variant: "destructive" });
     } finally {
       setLoading(false);
@@ -109,154 +115,158 @@ export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate })
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl p-6 rounded-2xl shadow-lg border border-slate-200">
+      <DialogContent className="max-w-4xl p-6 rounded-2xl shadow-lg border border-slate-200 bg-white">
         <DialogHeader className="border-b pb-3">
           <DialogTitle className="text-2xl font-bold text-slate-800">
-            Edit Quiz: {quiz?.title}
+            ✏️ Edit Quiz Global
           </DialogTitle>
           <p className="text-slate-500 text-sm mt-1">
-            Ubah informasi quiz global dan soal-soalnya di sini.
+            Ubah detail quiz global beserta daftar soalnya di sini.
           </p>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[70vh] pr-2">
-          <div className="space-y-5 px-3">
+        <ScrollArea className="max-h-[75vh] pr-3 mt-4">
+          <motion.div
+            className="space-y-5"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            {/* Informasi Umum */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-slate-700">Judul Quiz</label>
+                <Label htmlFor="title">Judul Quiz</Label>
                 <Input
+                  id="title"
                   name="title"
-                  className="rounded-lg border md:text-base border-gray-300"
                   value={formData.title}
                   onChange={handleChange}
-                  placeholder="Masukkan judul quiz..."
+                  placeholder="Masukkan judul quiz"
                 />
               </div>
               <div>
-                <Label>Kategori Quiz</Label>
-                <Input
-                  name="category"
-                  className="rounded-lg md:text-base border border-gray-300"
+                <Label htmlFor="category">Kategori</Label>
+                <Select
+                  onValueChange={(v) => setFormData((p) => ({ ...p, category: v }))}
                   value={formData.category}
-                  onChange={handleChange}
-                  placeholder="Masukkan kategori quiz"
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih kategori" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Umum">Umum</SelectItem>
+                    <SelectItem value="Teknologi">Teknologi</SelectItem>
+                    <SelectItem value="Sejarah">Sejarah</SelectItem>
+                    <SelectItem value="Budaya">Budaya</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700">Deskripsi</label>
+              <Label htmlFor="description">Deskripsi</Label>
               <Textarea
+                id="description"
                 name="description"
-                className="rounded-lg md:text-base border border-gray-300"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Deskripsi singkat tentang quiz..."
-                rows={3}
+                placeholder="Tuliskan deskripsi quiz..."
               />
             </div>
 
-            {/* List Soal */}
-            <motion.div
-              className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
+            {/* Daftar Soal */}
+            <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-slate-800">Daftar Soal</h3>
+                <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                  📝 Daftar Soal
+                </h3>
                 <Button
+                  type="button"
                   onClick={handleAddQuestion}
-                  variant="outline"
                   className="flex items-center gap-2 text-blue-600 border-blue-300 hover:bg-blue-50"
                 >
                   <PlusCircle size={16} /> Tambah Soal
                 </Button>
               </div>
 
-              {formData.questions.map((q, index) => (
-                <motion.div
-                  key={index}
-                  className="p-4 border border-gray-300 bg-white rounded-lg shadow-sm"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {/* Header */}
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="font-medium text-slate-800">Soal {index + 1}</p>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => handleRemoveQuestion(index)}
-                      className="text-red-500 hover:bg-red-50"
+              {formData.questions.length > 0 ? (
+                <div className="space-y-5">
+                  {formData.questions.map((q, index) => (
+                    <motion.div
+                      key={index}
+                      className="border border-gray-200 rounded-lg p-4 bg-gray-50 relative"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
                     >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveQuestion(index)}
+                        className="absolute top-3 right-3 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={18} />
+                      </button>
 
-                  <div className="h-px bg-gray-300 mb-3"></div>
+                      <Label className="font-semibold">Soal {index + 1}</Label>
+                      <Input
+                        value={q.question}
+                        onChange={(e) => handleQuestionChange(index, "question", e.target.value)}
+                        placeholder="Tulis pertanyaan di sini"
+                        className="mt-1"
+                      />
 
-                  {/* Input Pertanyaan */}
-                  <Input
-                    value={q.question}
-                    onChange={(e) => handleQuestionChange(index, "question", e.target.value)}
-                    placeholder="Tulis pertanyaan di sini..."
-                    className="mb-3 rounded-lg border border-gray-300"
-                  />
-
-                  {/* Opsi Jawaban */}
-                  <div className="grid grid-cols-2 gap-3 p-3">
-                    {q.options.map((opt, i) => (
-                      <div key={i} className="flex items-center rounded-lg border border-gray-300">
-                        <span className="w-6 font-semibold ml-4 text-slate-700">
-                          {String.fromCharCode(65 + i)}.
-                        </span>
-                        <Input
-                          className="border border-gray-300 rounded-lg"
-                          value={opt}
-                          onChange={(e) => {
-                            const newOptions = [...q.options];
-                            newOptions[i] = e.target.value;
-                            handleQuestionChange(index, "options", newOptions);
-                          }}
-                          placeholder={`Opsi ${String.fromCharCode(65 + i)}`}
-                        />
+                      <div className="grid grid-cols-2 gap-2 mt-3">
+                        {q.options.map((opt, i) => (
+                          <Input
+                            key={i}
+                            value={opt}
+                            onChange={(e) => handleOptionChange(index, i, e.target.value)}
+                            placeholder={`Opsi ${String.fromCharCode(65 + i)}`}
+                            className="bg-white"
+                          />
+                        ))}
                       </div>
-                    ))}
-                  </div>
 
-                  {/* Jawaban Benar */}
-                  <div className="mt-4">
-                    <label className="text-sm text-slate-700 font-medium">Pilih Jawaban Benar</label>
-                    <select
-                      value={q.answer}
-                      onChange={(e) => handleQuestionChange(index, "answer", parseInt(e.target.value))}
-                      className="mt-1 w-full border border-gray-300 rounded-md p-2 text-slate-700 bg-white focus:ring-2 focus:ring-blue-400"
-                    >
-                      <option value={0}>A</option>
-                      <option value={1}>B</option>
-                      <option value={2}>C</option>
-                      <option value={3}>D</option>
-                    </select>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <div className="flex justify-end gap-3 mt-6">
-              <Button variant="outline" onClick={onClose}>
-                Batal
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={loading}
-                className="bg-blue-600 text-white hover:bg-blue-700"
-              >
-                {loading ? "Menyimpan..." : "Simpan Perubahan"}
-              </Button>
+                      <div className="mt-3">
+                        <Label>Pilih Jawaban Benar</Label>
+                        <Select
+                          value={q.answer}
+                          onValueChange={(v) =>
+                            handleQuestionChange(index, "answer", parseInt(v))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih jawaban benar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["A", "B", "C", "D"].map((letter, i) => (
+                              <SelectItem key={i} value={i}>
+                                {letter}. {q.options[i] || "-"}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-slate-500 italic mt-3">
+                  Belum ada soal ditambahkan.
+                </p>
+              )}
             </div>
-          </div>
+          </motion.div>
         </ScrollArea>
+
+        <DialogFooter className="mt-6">
+          <Button
+            onClick={handleSave}
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg shadow-md"
+          >
+            {loading ? "Menyimpan..." : "Simpan Perubahan"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

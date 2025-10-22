@@ -221,7 +221,8 @@ export default function QuizGlobalTable() {
                             onClose={() => setOpenConfirmModal(false)}
                             onConfirm={handleConfirmDelete}
                             title="Konfirmasi Hapus"
-                            message={`Apakah kamu yakin ingin menghapus quiz "${selectedQuiz?.title}"?`}
+                            message={`Apakah kamu yakin ingin menghapus quiz`}
+                            main={`"${selectedQuiz?.title}"`}
                         />
                         <QuizGlobalDetailModal
                             isOpen={openDetailModal}

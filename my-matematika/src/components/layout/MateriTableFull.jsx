@@ -338,7 +338,8 @@ export default function MateriTableFull() {
                     onClose={() => setOpenConfirmModal(false)}
                     onConfirm={handleConfirmDelete}
                     title="Konfirmasi Hapus"
-                    message={`Apakah kamu yakin ingin menghapus materi "${selectedMateri?.title}"?`}
+                    message={`Apakah kamu yakin ingin menghapus materi`}
+                    main={`"${selectedMateri?.title}"`}
                 />
             </CardContent>
             </Card>

@@ -1,0 +1,12 @@
+---
+import MainLayout from "../../../../layouts/MainLayout.astro";
+import MateriDetail from "../../../../components/public/layout/MateriDetail.jsx";
+
+const { id } = Astro.params;
+---
+
+<MainLayout title="Detail Materi">
+    <section class="container mx-auto px-4 py-12">
+        <MateriDetail client:load id={id} />
+    </section>
+</MainLayout>

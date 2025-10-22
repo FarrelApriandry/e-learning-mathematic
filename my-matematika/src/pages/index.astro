@@ -1,7 +1,9 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import Hero from "../components/Hero.astro";
+import MateriSection from "../components/public/layout/MateriSection.jsx";
 ---
+
 <MainLayout title="Beranda">
   <Hero 
     heading="Asyik Math" 
@@ -34,46 +36,6 @@ import Hero from "../components/Hero.astro";
     </div>
   </section>
 
-  <!-- Quick links to kelas (preview) -->
-  <section class="container mx-auto px-4 py-8">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-2xl font-bold">Pilih Kelas</h2>
-      <a href="/sma/matematika" class="text-sm text-slate-500 hover:text-slate-800">Lihat Semua →</a>
-    </div>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <a href="/sma/matematika/aljabar" class="card p-6 flex flex-col justify-between">
-        <div>
-          <div class="text-sm text-amber-400">Kelas 10</div>
-          <div class="mt-2 text-lg font-semibold">Aljabar — Persamaan</div>
-          <p class="text-sm text-slate-600 mt-2">Ringkas & visual, + quiz level 1</p>
-        </div>
-        <div class="mt-4 self-end">
-          <span class="text-xs text-slate-500">Durasi video: 3–5 menit</span>
-        </div>
-      </a>
-
-      <a href="/sma/matematika/geometri" class="card p-6 flex flex-col justify-between">
-        <div>
-          <div class="text-sm text-amber-400">Kelas 10</div>
-          <div class="mt-2 text-lg font-semibold">Geometri — Bangun Datar</div>
-          <p class="text-sm text-slate-600 mt-2">Visual & praktik soal</p>
-        </div>
-        <div class="mt-4 self-end">
-          <span class="text-xs text-slate-500">Durasi video: 3–6 menit</span>
-        </div>
-      </a>
-
-      <a href="/sma/matematika/trigonometri" class="card p-6 flex flex-col justify-between">
-        <div>
-          <div class="text-sm text-amber-400">Kelas 11</div>
-          <div class="mt-2 text-lg font-semibold">Trigonometri — Dasar</div>
-          <p class="text-sm text-slate-600 mt-2">Konsep + contoh</p>
-        </div>
-        <div class="mt-4 self-end">
-          <span class="text-xs text-slate-500">Durasi video: 4–7 menit</span>
-        </div>
-      </a>
-    </div>
-  </section>
+  <!-- Materi Publik (replaces static "Pilih Kelas") -->
+  <MateriSection client:load/>
 </MainLayout>

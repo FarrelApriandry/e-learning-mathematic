@@ -1,4 +1,5 @@
 ---
+// src\components\Navbar.astro
 ---
 <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md border-b border-gray-100">
   <div class="container mx-auto px-4 md:px-6">
@@ -13,10 +14,10 @@
 
       <!-- Desktop links -->
       <div class="hidden md:flex items-center gap-4">
-        <a href="/sma/matematika" class="text-slate-700 hover:text-blue-600 transition">Matematika</a>
-        <a href="/sma/kelas/10" class="text-slate-700 hover:text-blue-600 transition">Quiz</a>
+        <a href="/materi/" class="text-slate-700 hover:text-blue-600 transition">Matematika</a>
+        <a href="/quiz/" class="text-slate-700 hover:text-blue-600 transition">Quiz</a>
         <a href="/about" class="text-slate-500 text-sm">Tentang</a>
-        <a href="/contact" class="ml-3 btn-primary">Mulai Belajar</a>
+        <a href="/materi/kelas" class="ml-3 btn-primary">Mulai Belajar</a>
       </div>
 
       <!-- Mobile menu button -->
@@ -32,8 +33,8 @@
     <!-- Mobile menu -->
     <div id="mobile-menu" class="md:hidden hidden">
       <div class="flex flex-col gap-2 py-4">
-        <a href="/sma/matematika" class="px-2 py-2 rounded-md hover:bg-slate-50">Matematika</a>
-        <a href="/sma/kelas/demo/quiz/" class="px-2 py-2 rounded-md hover:bg-slate-50">Quiz</a>
+        <a href="/materi/" class="px-2 py-2 rounded-md hover:bg-slate-50">Materi</a>
+        <a href="/quiz/" class="px-2 py-2 rounded-md hover:bg-slate-50">Quiz</a>
         <a href="/about" class="px-2 py-2 rounded-md hover:bg-slate-50">Tentang</a>
         <a href="/sma/matematika" class="mt-2 px-4 py-2 btn-primary text-center">Mulai Belajar</a>
       </div>

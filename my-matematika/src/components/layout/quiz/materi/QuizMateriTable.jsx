@@ -235,7 +235,8 @@ export default function QuizMateriTable() {
                             onClose={() => setOpenConfirmModal(false)}
                             onConfirm={handleConfirmDelete}
                             title="Konfirmasi Hapus"
-                            message={`Apakah kamu yakin ingin menghapus materi "${selectedMateri?.title}"?`}
+                            message={`Apakah kamu yakin ingin menghapus quiz`}
+                            main={`"${selectedMateri?.title}"`}
                         />
                         <QuizMateriDetailModal
                             isOpen={openDetailModal}

@@ -1,0 +1,11 @@
+---
+import MainLayout from "../../../../layouts/MainLayout.astro";
+import QuizList from "../../../../components/public/layout/QuizList.jsx";
+---
+
+<MainLayout title="Materi Kelas X">
+    <section class="container mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold text-center mb-10">Quiz Kelas X</h1>
+        <QuizList client:load kelas="10"/>
+    </section>
+</MainLayout>
