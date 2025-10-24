@@ -13,6 +13,7 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
   const [title, setTitle] = useState("");
   const [materiList, setMateriList] = useState([]);
   const [selectedMateri, setSelectedMateri] = useState("");
+  const [selectedClass, setSelectedClass] = useState("")
   const [description, setDescription] = useState("");
   const [questions, setQuestions] = useState([{ question: "", options: ["", "", "", ""], answer: "" }]);
   const [loading, setLoading] = useState(false);
@@ -53,6 +54,7 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
       await addDoc(collection(db, "quiz_materi"), {
         title,
         materi: selectedMateri,
+        class: selectedClass,
         description,
         questions,
         status: "draft", // 🔹 otomatis draft
@@ -64,6 +66,7 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
       // Reset form
       setTitle("");
       setSelectedMateri("");
+      setSelectedClass("");
       setDescription("");
       setQuestions([{ question: "", options: ["", "", "", ""], answer: "" }]);
 
@@ -109,21 +112,37 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
             </div>
 
             {/* Dropdown Materi */}
-            <div>
-              <Label>Pilih Materi</Label>
-              <select
-                value={selectedMateri}
-                onChange={(e) => setSelectedMateri(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              >
-                <option value="">-- Pilih Materi --</option>
-                {materiList.map((m, i) => (
-                  <option key={i} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label>Pilih Kelas</Label>
+                <select
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                  required
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                >
+                  <option className="hidden" value="">-- Pilih Kelas --</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+              </div>
+              <div>
+                <Label>Pilih Materi</Label>
+                <select
+                  value={selectedMateri}
+                  onChange={(e) => setSelectedMateri(e.target.value)}
+                  required
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                >
+                  <option className="hidden" value="">-- Pilih Materi --</option>
+                  {materiList.map((m, i) => (
+                    <option key={i} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Deskripsi */}

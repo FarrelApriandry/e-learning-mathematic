@@ -1,0 +1,16 @@
+---
+// src\pages\quiz\kelas\10\start.astro
+import QuizStart from "../../../../../components/public/layout/Quiz/QuizStart.jsx";
+
+const kelas = "12"
+const { quizId } = Astro.params;
+---
+
+<html lang="id">
+    <head>
+        <title>Quiz | Kelas {kelas}</title>
+    </head>
+    <body>
+        <QuizStart quizId={quizId} kelas={kelas} client:load />
+    </body>
+</html>

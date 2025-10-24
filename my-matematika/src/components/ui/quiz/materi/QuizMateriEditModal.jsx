@@ -15,6 +15,7 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
     const [formData, setFormData] = useState({
         title: "",
         description: "",
+        class: "",
         materi: "",
         status: "draft",
         questions: [],
@@ -28,6 +29,7 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
             setFormData({
                 title: quiz.title || "",
                 description: quiz.description || "",
+                class: quiz.class || "",
                 materi: quiz.materi || "",
                 status: quiz.status || "draft",
                 questions: Array.isArray(quiz.questions) ? quiz.questions : [],
@@ -79,42 +81,36 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
     };
 
     const handleSave = async () => {
-        // Cek field utama kosong
+        
         if (!formData.title.trim() || !formData.description.trim() || !formData.materi.trim()) {
         toast({ title: "Semua field utama harus diisi!", variant: "destructive" });
         return;
         }
     
-        // Cek minimal ada 1 soal
         if (formData.questions.length === 0) {
         toast({ title: "Tambahkan minimal satu soal!", variant: "destructive" });
         return;
         }
     
-        // Validasi tiap soal
         for (let i = 0; i < formData.questions.length; i++) {
         const q = formData.questions[i];
-    
-        // Pertanyaan kosong
+    g
         if (!q.question.trim()) {
             toast({ title: `Soal ${i + 1} belum diisi!`, variant: "destructive" });
             return;
         }
-    
-        // Opsi kosong
+
         if (q.options.some(opt => !opt.trim())) {
             toast({ title: `Semua opsi pada soal ${i + 1} harus diisi!`, variant: "destructive" });
             return;
         }
-    
-        // Jawaban belum dipilih
+
         if (q.answer === "" || q.answer == null || isNaN(q.answer)) {
             toast({ title: `Pilih jawaban benar untuk soal ${i + 1}!`, variant: "destructive" });
             return;
         }
         }
-    
-        // Semua valid ✅
+
         setLoading(true);
         try {
         const quizRef = doc(db, "quiz_materi", quiz.id);
@@ -149,7 +145,7 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
                 {/* Scrollable Content */}
                 <ScrollArea className="max-h-[70vh] pr-2">
                     <div className="space-y-5 px-3">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <label className="text-sm font-medium text-slate-700">
                                     Judul Quiz
@@ -163,24 +159,43 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-sm font-medium text-slate-700">
-                                    Jenis Materi
-                                </label>
-                                <select
-                                    name="materi"
-                                    value={formData.materi}
-                                    onChange={handleChange}
-                                    required
-                                    className="md:text-base w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 bg-white"
-                                >
-                                    <option className="hidden" value="">-- Pilih Materi --</option>
-                                    {materiList.map((m, i) => (
-                                    <option key={i} value={m}>
-                                        {m}
-                                    </option>
-                                    ))}
-                                </select>
+                            <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label className="text-sm font-medium text-slate-700">
+                                        Jenis Materi
+                                    </label>
+                                    <select
+                                        name="materi"
+                                        value={formData.materi}
+                                        onChange={handleChange}
+                                        required
+                                        className="md:text-base w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 bg-white"
+                                    >
+                                        <option className="hidden" value="">-- Pilih Materi --</option>
+                                        {materiList.map((m, i) => (
+                                        <option key={i} value={m}>
+                                            {m}
+                                        </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium text-slate-700">
+                                        Jenis Kelas
+                                    </label>
+                                    <select
+                                        name="class"
+                                        value={formData.class}
+                                        onChange={handleChange}
+                                        required
+                                        className="md:text-base w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 bg-white"
+                                    >
+                                        <option className="hidden" value="">-- Pilih Kelas --</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 

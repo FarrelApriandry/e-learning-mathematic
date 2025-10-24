@@ -5,7 +5,7 @@ const {
   second_heading = 'E-Learning',
   sub = 'Belajar Matematika SMA jadi lebih interaktif', 
   ctaText = 'Mulai Belajar', 
-  ctaHref = '/sma/matematika' 
+  ctaHref = '/materi/kelas' 
 } = Astro.props;
 ---
 
@@ -35,7 +35,7 @@ const {
 
         <div class="mt-8 flex gap-3 hero-anim delay-200">
           <a href={ctaHref} class="btn-primary shadow-md hover:shadow-lg hover:-translate-y-0.5 transition">{ctaText}</a>
-          <a href="/sma/kelas/demo/quiz/" class="btn-ghost shadow-sm hover:shadow-md hover:-translate-y-0.5 transition">Coba Quiz Demo</a>
+          <a href="/quiz/" class="btn-ghost shadow-sm hover:shadow-md hover:-translate-y-0.5 transition">Coba Quiz Demo</a>
         </div>
 
         <div class="mt-10 flex items-center gap-8 hero-anim delay-300">
@@ -59,6 +59,41 @@ const {
 
       <!-- RIGHT -->
       <div class="relative hero-anim delay-350">
+        <!-- Card utama: ajakan ikut event -->
+        <div class="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
+          <div class="flex flex-col gap-4 text-center">
+            <div class="text-xs text-slate-500 uppercase tracking-wide">Event Aktif</div>
+            <div class="text-2xl font-bold text-slate-900">Quiz Event 🎯</div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Uji kemampuanmu dan menjadi peringkat pertama!  
+              Cukup masukkan username untuk bergabung dan dapatkan nilaimu!.
+            </p>
+
+            <div class="mt-4 flex justify-center">
+              <a
+                href="/quiz/join"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+              >
+                🚀 Join Sekarang
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card kecil: progress & leaderboard
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
+            <div class="text-sm font-medium text-slate-900">Leaderboard</div>
+            <div class="text-xs text-slate-500 mt-1">Lihat peringkat mingguan</div>
+          </div>
+          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
+            <div class="text-sm font-medium text-slate-900">Hadiah & Badge</div>
+            <div class="text-xs text-slate-500 mt-1">Kumpulkan reward tiap event</div>
+          </div>
+        </div> -->
+      </div>
+
+      <!-- <div class="relative hero-anim delay-350">
         <div class="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
           <div class="flex items-start justify-between gap-4">
             <div>
@@ -83,7 +118,7 @@ const {
             <div class="text-xs text-slate-500 mt-1">Bentuk & ruang</div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 

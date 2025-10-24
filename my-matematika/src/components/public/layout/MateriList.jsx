@@ -37,7 +37,7 @@ export default function MateriList({ kelas }) {
         {materi.map((m) => (
             <a
             key={m.id}
-            href={`/sma/kelas/${kelas}/${m.id}`}
+            href={`/materi/kelas/${kelas}/${m.id}`}
             className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
             >
             <div>

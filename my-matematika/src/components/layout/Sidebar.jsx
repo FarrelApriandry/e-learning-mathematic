@@ -10,11 +10,15 @@ import {
   X,
   LogOut,
   Globe,
+  Mail,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activePath, setActivePath] = useState("");
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -30,12 +34,35 @@ export default function Sidebar() {
     }
   }, []);
 
+  // Struktur navigasi baru
   const navItems = [
     { icon: LayoutDashboard, text: "Dashboard", path: "/admin/dashboard/" },
     { icon: BookCopy, text: "Materi", path: "/admin/materi/" },
-    { icon: ScrollText, text: "Quiz Materi", path: "/admin/quiz_materi/" },
-    { icon: Globe, text: "Quiz Global", path: "/admin/quiz_global/" },
-    { icon: CalendarClock, text: "Quiz Event", path: "/admin/quiz_event/" },
+    {
+      icon: ScrollText,
+      text: "Quiz Materi",
+      children: [
+        { text: "Quiz", path: "/admin/quiz_materi/" },
+        { text: "Participants", path: "/admin/quiz_materi/participants/" },
+      ],
+    },
+    {
+      icon: Globe,
+      text: "Quiz Global",
+      children: [
+        { text: "Quiz", path: "/admin/quiz_global/" },
+        { text: "Participants", path: "/admin/quiz_global/participants/" },
+      ],
+    },
+    {
+      icon: CalendarClock,
+      text: "Quiz Event",
+      children: [
+        { text: "Quiz", path: "/admin/quiz_event/" },
+        { text: "Participants", path: "/admin/quiz_event/participants/" },
+      ],
+    },
+    { icon: Mail, text: "Masukan", path: "/admin/pesan/" },
     { icon: Bolt, text: "Settings", path: "/admin/settings/" },
   ];
 
@@ -114,21 +141,61 @@ export default function Sidebar() {
 
               {/* Navigation */}
               <nav className="flex flex-col gap-1">
-                {navItems.map(({ icon: Icon, text, path }) => (
-                  <motion.a
-                    key={path}
-                    href={path}
-                    className={`${linkBase} ${hover} ${
-                      isActive(path)
-                        ? "bg-blue-500/60 text-white shadow-md"
-                        : "text-blue-100"
-                    }`}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{text}</span>
-                  </motion.a>
+                {navItems.map(({ icon: Icon, text, path, children }) => (
+                  <div key={text}>
+                    {/* item utama */}
+                    <motion.div
+                      onClick={() =>
+                        children
+                          ? setOpenDropdown(
+                              openDropdown === text ? null : text
+                            )
+                          : (window.location.href = path)
+                      }
+                      className={`${linkBase} ${hover} cursor-pointer ${
+                        isActive(path)
+                          ? "bg-blue-500/60 text-white shadow-md"
+                          : "text-blue-100"
+                      }`}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span>{text}</span>
+                      {children &&
+                        (openDropdown === text ? (
+                          <ChevronDown className="ml-auto w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="ml-auto w-4 h-4" />
+                        ))}
+                    </motion.div>
+
+                    {/* dropdown items */}
+                    <AnimatePresence>
+                      {openDropdown === text && children && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="ml-8 mt-1 flex flex-col gap-1"
+                        >
+                          {children.map((child) => (
+                            <a
+                              key={child.path}
+                              href={child.path}
+                              className={`block px-3 py-2 rounded-md text-sm ${
+                                isActive(child.path)
+                                  ? "bg-blue-500/60 text-white"
+                                  : "text-blue-200 hover:text-white hover:bg-blue-500/30"
+                              }`}
+                            >
+                              {child.text}
+                            </a>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 ))}
               </nav>
             </div>

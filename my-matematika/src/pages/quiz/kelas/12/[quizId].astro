@@ -1,0 +1,16 @@
+---
+// src\pages\quiz\kelas\10\[quizId].astro
+import QuizJoin from "../../../../components/public/layout/Quiz/QuizJoin.jsx";
+
+const kelas = "12";
+const { quizId } = Astro.params;
+---
+
+<html lang="id">
+    <head>
+        <title>Quiz Materi Kelas {kelas}</title>
+    </head>
+    <body class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950">
+        <QuizJoin quizType="materi" quizId={quizId} kelas={kelas} client:load />
+    </body>
+</html>
