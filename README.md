@@ -2,7 +2,7 @@
 
 Sebuah platform website e-learning sederhana yang berfokus pada pembelajaran matematika. Proyek ini saya kembangkan untuk menyediakan materi pelajaran dan kuis interaktif bagi pengguna.
 
-**Demo Live:** [https://farrelapriandry.github.io/e-learning-mathematic/](https://farrelapriandry.github.io/e-learning-mathematic/)
+**Demo Live:** learning-mathematic.vercel.app/](https://learning-mathematic.vercel.app/)
 
 ---
 
