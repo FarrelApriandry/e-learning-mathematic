@@ -10,7 +10,7 @@ import QuizMateriDetailModal from "../../../ui/quiz/materi/QuizMateriDetailModal
 import QuizMateriEditModal from "../../../ui/quiz/materi/QuizMateriEditModal";
 import ChangeStatusModal from "../../../ui/quiz/materi/ChangeStatusMateriModal";
 
-export default function QuizMateriTable() {
+export default function QuizMateriTable(externalRefresh ) {
     const [quizList, setQuizList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openConfirmModal, setOpenConfirmModal] = useState(false);
@@ -20,26 +20,31 @@ export default function QuizMateriTable() {
     const [selectedQuiz, setSelectedQuiz] = useState(null);
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
-    // Ambil data quiz dari Firestore
+    const fetchQuiz = async () => {
+        setLoading(true);
+        try {
+            const quizRef = collection(db, "quiz_materi");
+            const snapshot = await getDocs(quizRef);
+            const data = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+        }));
+            setQuizList(data);
+        } catch (error) {
+            console.error("🔥 Gagal ambil data quiz:", error);
+            toast({ title: "Gagal memuat data quiz", variant: "destructive" });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchQuiz = async () => {
-            try {
-                const quizRef = collection(db, "quiz_materi");
-                const snapshot = await getDocs(quizRef);
-                const data = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setQuizList(data);
-            } catch (error) {
-                console.error("🔥 Gagal ambil data quiz:", error);
-                toast({ title: "Gagal memuat data quiz", variant: "destructive" });
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchQuiz();
     }, []);
+
+    useEffect(() => {
+        if (externalRefresh) fetchQuiz();
+    }, [externalRefresh]);
 
     const handleOpenConfirm = (quiz) => {
         setSelectedMateri(quiz);
@@ -127,6 +132,7 @@ export default function QuizMateriTable() {
                         <tr>
                             <th className="py-3 px-5 font-semibold">Judul Quiz</th>
                             <th className="py-3 px-5 font-semibold">Deskripsi</th>
+                            <th className="py-3 px-5 font-semibold">Kelas</th>
                             <th className="py-3 px-5 font-semibold">Jenis Materi</th>
                             <th className="py-3 px-5 font-semibold text-center">Jumlah Soal</th>
                             <th className="py-3 px-5 font-semibold text-center">Status</th>
@@ -159,6 +165,9 @@ export default function QuizMateriTable() {
                                     </td>
                                     <td className="py-3 px-5 text-slate-700">
                                         {quiz.description || "-"}
+                                    </td>
+                                    <td className="py-3 px-5 text-slate-700">
+                                        {quiz.class || "-"}
                                     </td>
                                     <td className="py-3 px-5 text-slate-700">
                                         {quiz.materi || "-"}

@@ -8,6 +8,7 @@ import { Input } from "../../input";
 import { Label } from "../../label";
 import { Select, SelectTrigger, SelectContent, SelectItem } from "../../select";
 import { createPortal } from "react-dom";
+import { toast } from "src/hooks/use-toast";
 
 export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
   const [title, setTitle] = useState("");
@@ -76,6 +77,11 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
       console.error("Error adding quiz:", err);
       alert("Gagal menambahkan quiz. Coba lagi!");
     } finally {
+      setMateriList
+      toast({ title: (`Quiz ${title} berhasil ditambahkan`), variant: "success" })
+      setTimeout(() => {
+        window.location.href = "/admin/quiz_materi/";
+      }, 1000); // delay 1.6 detik agar toast muncul
       setLoading(false);
     }
   };

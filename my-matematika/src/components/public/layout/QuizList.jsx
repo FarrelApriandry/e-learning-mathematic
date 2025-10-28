@@ -14,7 +14,7 @@ export default function QuizList({ kelas }) {
             const snapshot = await getDocs(colRef)
             const data = snapshot.docs
             .map((doc) => ({ id: doc.id, ...doc.data() }))
-            .filter((m) => m.class === kelas)
+            .filter((m) => m.class === kelas && m.status === "published")
             setQuiz(data)
         } catch (err) {
             console.error(err)
