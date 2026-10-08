@@ -115,9 +115,7 @@ export default function Sidebar() {
               {/* Header */}
               <div className="flex items-center justify-between mb-5 px-1">
                 <a href="/admin/dashboard/" className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 7-3.6 9.4a1 1 0 0 1-1.8 0L9 7"/><path d="M6 19h12"/></svg>
-                  </span>
+                  <img src="/icon.svg" className="h-9 w-9" alt="Logo Asyik Math" width="36" height="36" />
                   <span className="leading-tight">
                     <span className="block text-sm font-extrabold tracking-tight text-slate-900">
                       Asyik Math

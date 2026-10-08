@@ -44,9 +44,7 @@ const Login = () => {
             {/* LEFT: FORM */}
             <AuthCard>
             <div className="flex items-center gap-3 mb-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 7-3.6 9.4a1 1 0 0 1-1.8 0L9 7"/><path d="M6 19h12"/></svg>
-                </div>
+                <img src="/icon.svg" className="h-10 w-10" alt="Logo Asyik Math" width="40" height="40" />
                 <div>
                 <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Asyik Math Admin</h1>
                 <p className="text-sm text-slate-500">Panel pengelolaan konten</p>
