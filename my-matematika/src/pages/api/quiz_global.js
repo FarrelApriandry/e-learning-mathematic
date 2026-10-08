@@ -1,82 +1,116 @@
-import { db, admin } from "src/lib/firebaseAdmin";
+// src/pages/api/quiz_global.js
+import {
+  ok,
+  okMessage,
+  badRequest,
+  serverError,
+  readBody,
+  toId,
+  eq,
+  and,
+  desc,
+  quizGlobal,
+  quizParticipant,
+} from "../../lib/apiHelpers.js";
+import { db } from "../../db/index.js";
 
+// ===============================
+// GET — Ambil semua quiz global
+// (kunci jawaban dibuang sebelum ke client)
+// ===============================
 export async function GET() {
-    try {
-        const snapshot = await db.collection("quiz_global").get();
-        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        // strip correctIndex before returning to client
-        const safe = data.map(q => {
-        const questions = (q.questions || []).map(({ id, text, options, imageUrl, weight, type, metadata }) => ({
-            id, text, options, imageUrl, weight, type, metadata
-        }));
-        return { ...q, questions };
-        });
-        return new Response(JSON.stringify({ success: true, data: safe }), { status: 200 });
-    } catch (err) {
-        console.error(err);
-        return new Response(JSON.stringify({ success: false, message: err.message }), { status: 500 });
-    }
-    }
+  try {
+    const rows = await db
+      .select()
+      .from(quizGlobal)
+      .orderBy(desc(quizGlobal.created_at));
 
-    export async function POST({ request }) {
-    try {
-        const body = await request.json();
-        const payload = {
-            title: body.title || "Untitled",
-            description: body.description || "",
-            visibilty: body.visibilty || "",
-            category: body.category || "",
-            questions: body.questions || [],
-            randomize_order: body.randomize_order ?? true,
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-            updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        };
-        const ref = await db.collection("quiz_global").add(payload);
-        return new Response(JSON.stringify({ success: true, id: ref.id }), { status: 200 });
-    } catch (err) {
-        console.error(err);
-        return new Response(JSON.stringify({ success: false, message: err.message }), { status: 500 });
-    }
-    }
+    const data = rows.map((q) => ({
+      ...q,
+      questions: (q.questions || []).map(({ answer, ...rest }) => rest),
+    }));
 
-    // basic DELETE by id
-    export async function DELETE({ request }) {
-    try {
-        const { id } = await request.json();
-        if (!id) return new Response(JSON.stringify({ success: false, message: "ID required" }), { status: 400 });
-        await db.collection("quiz_global").doc(id).delete();
-        return new Response(JSON.stringify({ success: true }), { status: 200 });
-    } catch (err) {
-        console.error(err);
-        return new Response(JSON.stringify({ success: false, message: err.message }), { status: 500 });
-    }
+    return ok(data);
+  } catch (err) {
+    return serverError(err, "GET quiz_global");
+  }
 }
 
-// ✅ PUT: Update quiz berdasarkan ID
+// ===============================
+// POST — Tambah quiz global
+// ===============================
+export async function POST({ request }) {
+  try {
+    const body = await readBody(request);
+
+    const [row] = await db
+      .insert(quizGlobal)
+      .values({
+        title: body.title || "Untitled",
+        description: body.description ?? "",
+        // NOTE: ejaan "visibilty" sengaja mengikuti kode lama (Firestore)
+        // supaya payload client yang sudah ada tetap jalan.
+        visibilty: body.visibilty ?? "",
+        category: body.category ?? "",
+        questions: body.questions || [],
+        randomize_order: body.randomize_order ?? true,
+      })
+      .returning();
+
+    return okMessage("Quiz global berhasil ditambahkan!", { id: row.id });
+  } catch (err) {
+    return serverError(err, "POST quiz_global");
+  }
+}
+
+// ===============================
+// PUT — Update quiz global by ID
+// ===============================
 export async function PUT({ request }) {
-    try {
-        const body = await request.json();
-        const { id, ...updatedData } = body;
+  try {
+    const body = await readBody(request);
+    const id = toId(body.id);
+    if (!id) return badRequest("ID quiz tidak ditemukan.");
 
-        if (!id)
-            return new Response(
-                JSON.stringify({ success: false, message: "ID quiz tidak ditemukan." }),
-                { status: 400 }
-            );
+    const updates = {};
+    if (body.title !== undefined) updates.title = body.title;
+    if (body.description !== undefined) updates.description = body.description;
+    if (body.visibilty !== undefined) updates.visibilty = body.visibilty;
+    if (body.category !== undefined) updates.category = body.category;
+    if (body.questions !== undefined) updates.questions = body.questions;
+    if (body.randomize_order !== undefined)
+      updates.randomize_order = body.randomize_order;
+    updates.updated_at = new Date();
 
-        updatedData.updated_at = admin.firestore.FieldValue.serverTimestamp();
+    await db.update(quizGlobal).set(updates).where(eq(quizGlobal.id, id));
 
-        await db.collection("quiz_global").doc(id).update(updatedData);
+    return okMessage("Quiz Global berhasil diperbarui!");
+  } catch (err) {
+    return serverError(err, "PUT quiz_global");
+  }
+}
 
-        return new Response(
-            JSON.stringify({ success: true, message: "Quiz Global berhasil diperbarui!" }),
-            { status: 200 }
-        );
-    } catch (err) {
-        console.error("🔥 Error PUT quiz_global:", err);
-        return new Response(
-            JSON.stringify({ success: false, message: err.message }),
-            { status: 500 }
-        );
-    }
+// ===============================
+// DELETE — Hapus quiz global by ID
+// ===============================
+export async function DELETE({ request }) {
+  try {
+    const body = await readBody(request);
+    const id = toId(body.id);
+    if (!id) return badRequest("ID quiz tidak ditemukan.");
+
+    // participants tidak ber-FK (polymorphic), jadi dihapus manual dulu
+    await db.delete(quizParticipant).where(
+      and(
+        eq(quizParticipant.quiz_type, "global"),
+        eq(quizParticipant.quiz_id, id)
+      )
+    );
+
+    await db.delete(quizGlobal).where(eq(quizGlobal.id, id));
+
+    return okMessage("Quiz global berhasil dihapus!");
+  } catch (err) {
+    return serverError(err, "DELETE quiz_global");
+  }
 }

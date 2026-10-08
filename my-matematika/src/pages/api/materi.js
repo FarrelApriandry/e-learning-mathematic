@@ -1,115 +1,102 @@
 // src/pages/api/materi.js
-import { db, admin } from "src/lib/firebaseAdmin";
+import {
+  ok,
+  okMessage,
+  badRequest,
+  serverError,
+  readBody,
+  toId,
+  eq,
+  desc,
+  materi,
+} from "../../lib/apiHelpers.js";
+import { db } from "../../db/index.js";
 
-// ✅ GET: Ambil semua materi dari Firestore
+// ===============================
+// GET — Ambil semua materi
+// ===============================
 export async function GET() {
-    try {
-        const snapshot = await db.collection("materi").get();
-        const data = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+  try {
+    const data = await db
+      .select()
+      .from(materi)
+      .orderBy(desc(materi.created_at));
 
-        return new Response(
-            JSON.stringify({ success: true, data }),
-            { status: 200 }
-        );
-    } catch (err) {
-        console.error("🔥 Error GET materi:", err);
-        return new Response(
-            JSON.stringify({ success: false, message: err.message }),
-            { status: 500 }
-        );
-    }
+    return ok(data);
+  } catch (err) {
+    return serverError(err, "GET materi");
+  }
 }
 
-// ✅ POST: Tambahkan materi baru ke Firestore
+// ===============================
+// POST — Tambah materi baru
+// ===============================
 export async function POST({ request }) {
-    try {
-        const body = await request.json();
+  try {
+    const body = await readBody(request);
 
-        const payload = {
-            title: body.title,
-            description: body.description,
-            class: body.class,
-            materi: body.materi,
-            youtube_link: body.youtube_link,
-            pdf_link: body.pdf_link,
-            downloads: 0,
-            views: 0,
-            created_by: 1,
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-            updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        };
-
-        await db.collection("materi").add(payload);
-
-        return new Response(
-            JSON.stringify({ success: true, message: "Materi berhasil ditambahkan!" }),
-            { status: 200 }
-        );
-    } catch (err) {
-        console.error("🔥 Firestore Error:", err);
-        return new Response(
-            JSON.stringify({ success: false, message: err.message }),
-            { status: 500 }
-        );
+    if (!body.title) {
+      return badRequest("Title wajib diisi.");
     }
+
+    const [row] = await db
+      .insert(materi)
+      .values({
+        title: body.title,
+        description: body.description ?? "",
+        class: body.class ?? "",
+        materi: body.materi ?? "",
+        youtube_link: body.youtube_link ?? null,
+        pdf_link: body.pdf_link ?? null,
+        created_by: body.created_by ? String(body.created_by) : "system",
+      })
+      .returning();
+
+    return okMessage("Materi berhasil ditambahkan!", { id: row.id });
+  } catch (err) {
+    return serverError(err, "POST materi");
+  }
 }
 
-// ✅ PUT: Update data materi yang sudah ada
+// ===============================
+// PUT — Update materi by ID
+// ===============================
 export async function PUT({ request }) {
-    try {
-        const body = await request.json();
-        const { id, ...updateData } = body;
+  try {
+    const body = await readBody(request);
+    const id = toId(body.id);
+    if (!id) return badRequest("ID materi tidak ditemukan.");
 
-        if (!id) {
-            return new Response(
-                JSON.stringify({ success: false, message: "ID materi tidak ditemukan." }),
-                { status: 400 }
-            );
-        }
+    const updates = {};
+    if (body.title !== undefined) updates.title = body.title;
+    if (body.description !== undefined) updates.description = body.description;
+    if (body.class !== undefined) updates.class = body.class;
+    if (body.materi !== undefined) updates.materi = body.materi;
+    if (body.youtube_link !== undefined) updates.youtube_link = body.youtube_link;
+    if (body.pdf_link !== undefined) updates.pdf_link = body.pdf_link;
+    updates.updated_at = new Date();
 
-        updateData.updated_at = admin.firestore.FieldValue.serverTimestamp();
+    await db.update(materi).set(updates).where(eq(materi.id, id));
 
-        await db.collection("materi").doc(id).update(updateData);
-
-        return new Response(
-            JSON.stringify({ success: true, message: "Materi berhasil diperbarui!" }),
-            { status: 200 }
-        );
-    } catch (err) {
-        console.error("🔥 Error PUT materi:", err);
-        return new Response(
-            JSON.stringify({ success: false, message: err.message }),
-            { status: 500 }
-        );
-    }
+    return okMessage("Materi berhasil diperbarui!");
+  } catch (err) {
+    return serverError(err, "PUT materi");
+  }
 }
 
-// ✅ DELETE: Hapus materi
+// ===============================
+// DELETE — Hapus materi by ID
+// ===============================
 export async function DELETE({ request }) {
-    try {
-        const { id } = await request.json();
+  try {
+    const body = await readBody(request);
+    const id = toId(body.id);
+    if (!id) return badRequest("ID materi tidak ditemukan.");
 
-        if (!id) {
-            return new Response(
-                JSON.stringify({ success: false, message: "ID materi tidak ditemukan." }),
-                { status: 400 }
-            );
-        }
+    await db.delete(materi).where(eq(materi.id, id));
 
-        await db.collection("materi").doc(id).delete();
-
-        return new Response(
-            JSON.stringify({ success: true, message: "Materi berhasil dihapus!" }),
-            { status: 200 }
-        );
-    } catch (err) {
-        console.error("🔥 Error DELETE materi:", err);
-        return new Response(
-            JSON.stringify({ success: false, message: err.message }),
-            { status: 500 }
-        );
-    }
+    return okMessage("Materi berhasil dihapus!");
+  } catch (err) {
+    return serverError(err, "DELETE materi");
+  }
 }
