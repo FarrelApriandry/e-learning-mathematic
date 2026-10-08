@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "../../../ui/card";
 import { Progress } from "../../../ui/progress";
-import { Loader2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { fetchQuizMateri, submitQuizResult } from "../../../../lib/apiClient.js";
+import { EmptyState } from "../cards.jsx";
 
-// 🔹 Tambahan
-let BlockMath, InlineMath;
+let BlockMath;
 import("react-katex").then((mod) => {
     BlockMath = mod.BlockMath || mod.default?.BlockMath;
-    InlineMath = mod.InlineMath || mod.default?.InlineMath;
 });
 import "katex/dist/katex.min.css";
+
+const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
 
 export default function QuizStart({ quizId, kelas }) {
     const [quiz, setQuiz] = useState(null);
@@ -22,9 +22,10 @@ export default function QuizStart({ quizId, kelas }) {
     const [loading, setLoading] = useState(true);
     const [finished, setFinished] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState("");
 
     useEffect(() => {
-        const fetchQuiz = async () => {
+        const load = async () => {
         try {
             const data = await fetchQuizMateri({ id: quizId });
             if (data) setQuiz(data);
@@ -35,44 +36,61 @@ export default function QuizStart({ quizId, kelas }) {
         }
         };
 
-        fetchQuiz();
+        load();
     }, [quizId]);
 
-    if (loading)
+    useEffect(() => {
+        if (!finished || saving) return;
+        const q = quiz?.questions || [];
+        const answerArr = q.map((_, i) => answers[i] ?? -1);
+        const username = sessionStorage.getItem("quiz_username") || "Anon";
+        setSaving(true);
+        // Skor dihitung server-side (kunci jawaban tidak pernah ke browser).
+        submitQuizResult("materi", quizId, username, answerArr, 0, q.length)
+            .catch((err) => {
+                console.error("Error saving participant result:", err);
+                setSaveError("Hasil gagal tersimpan — periksa koneksi, lalu muat ulang halaman.");
+            })
+            .finally(() => setSaving(false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [finished]);
+
+    if (loading) {
         return (
-        <div className="min-h-screen flex flex-col items-center justify-center text-indigo-600">
-            <Loader2 className="w-10 h-10 animate-spin mb-4" />
-            <p className="text-lg font-semibold animate-pulse">Menyiapkan Quiz...</p>
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+            <div className="w-full max-w-md animate-pulse rounded-2xl border border-slate-200 bg-white p-6" aria-hidden="true">
+            <div className="mx-auto h-4 w-32 rounded bg-slate-200" />
+            <div className="mx-auto mt-3 h-2 w-full rounded-full bg-slate-200" />
+            <div className="mt-6 space-y-3">
+                <div className="h-5 rounded bg-slate-200" />
+                {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-12 rounded-xl bg-slate-100" />
+                ))}
+            </div>
+            </div>
         </div>
         );
+    }
 
-    if (!quiz)
+    if (!quiz) {
         return (
-        <p className="text-center mt-20 text-red-500 font-semibold text-lg">
-            Quiz tidak ditemukan 😢
-        </p>
+        <div className="mx-auto max-w-2xl px-4 py-16">
+            <EmptyState
+            title="Quiz tidak ditemukan"
+            hint="Tautan quiz ini sudah tidak tersedia atau sudah dihapus."
+            actionHref={`/quiz/kelas/${kelas}/`}
+            actionLabel="Kembali ke daftar quiz"
+            />
+        </div>
         );
+    }
 
     const questions = quiz.questions || [];
     const total = questions.length;
-    const progress = ((current + 1) / total) * 100;
+    const progress = total > 0 ? ((current + 1) / total) * 100 : 0;
 
     const handleSelect = (qIndex, optionIndex) => {
         setAnswers({ ...answers, [qIndex]: optionIndex });
-    };
-
-    // Skor dihitung server-side: kirim jawaban, server yang koreksi
-    // (kunci jawaban tidak pernah dikirim ke browser).
-    const saveParticipantResult = async (quizId, name, answerArr, total) => {
-        try {
-        setSaving(true);
-        await submitQuizResult("materi", quizId, name, answerArr, 0, total);
-        console.log("✅ Participant result saved!");
-        } catch (err) {
-        console.error("❌ Error saving participant result:", err);
-        } finally {
-        setSaving(false);
-        }
     };
 
     const handleNext = () => {
@@ -80,109 +98,138 @@ export default function QuizStart({ quizId, kelas }) {
         else setFinished(true);
     };
 
+    const handleBack = () => {
+        if (current > 0) setCurrent(current - 1);
+    };
+
     if (finished) {
         const answerArr = questions.map((_, i) => answers[i] ?? -1);
+        const answered = answerArr.filter((a) => a >= 0).length;
         const username = sessionStorage.getItem("quiz_username") || "Anon";
-        saveParticipantResult(quizId, username, answerArr, total);
 
         return (
-        <motion.div
-            className="flex flex-col items-center justify-center min-h-screen text-center bg-gradient-to-b from-indigo-100 to-purple-200 dark:from-slate-900 dark:to-indigo-950"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-        >
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
             <motion.div
-            className="bg-white dark:bg-slate-900 shadow-2xl rounded-2xl p-10 w-[90%] sm:w-[400px]"
-            initial={{ scale: 0.8, y: 50 }}
-            animate={{ scale: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 120 }}
+            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
             >
-            <div className="flex items-center justify-center gap-2 mb-4">
-                <Sparkles className="text-indigo-500 w-6 h-6" />
-                <h2 className="text-3xl font-bold text-indigo-700">Quiz Selesai 🎉</h2>
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             </div>
-            <p className="text-lg font-medium mb-2">{username}</p>
-            <p className="text-xl mb-6">
-                Jawaban kamu tersimpan.
-                <span className="ml-2 font-bold text-indigo-600">
-                {answerArr.filter((a) => a >= 0).length}/{total} terjawab
-                </span>
-            </p>
+            <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-slate-900">Quiz selesai</h2>
+            <p className="mt-1 text-sm text-slate-500">{username} &bull; {quiz.title}</p>
+            <div className="mt-6 rounded-2xl bg-slate-50 px-4 py-5 ring-1 ring-inset ring-slate-200">
+                <div className="text-4xl font-extrabold text-slate-900">{answered}<span className="text-lg font-bold text-slate-400">/{total}</span></div>
+                <div className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">soal terjawab</div>
+            </div>
+            {saving && <p className="mt-4 text-sm text-slate-500">Menyimpan hasil...</p>}
+            {saveError && (
+                <p role="alert" className="mt-4 rounded-xl bg-red-50 px-3.5 py-2.5 text-sm font-medium text-red-700 ring-1 ring-inset ring-red-200">
+                {saveError}
+                </p>
+            )}
             <Button
                 disabled={saving}
-                onClick={() => (window.location.href = `/quiz/kelas/${kelas}`)}
-                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg hover:scale-[1.03] transition-transform duration-200"
+                onClick={() => (window.location.href = `/quiz/kelas/${kelas}/`)}
+                className="mt-6 w-full bg-indigo-600 py-2.5 font-semibold text-white hover:bg-indigo-700"
             >
-                {saving ? "Menyimpan hasil..." : "Kembali ke Daftar Quiz"}
+                Kembali ke Daftar Quiz
             </Button>
             </motion.div>
-        </motion.div>
+        </div>
         );
     }
 
     const q = questions[current];
 
-    // 🔹 Deteksi apakah soal ini mengandung ekspresi LaTeX
-    const isMath = (text) => /\\|{|}|_|\^/.test(text);
+    // Deteksi ekspresi LaTeX
+    const isMath = (text) => typeof text === "string" && /\\\\|{|}|_|\^/.test(text);
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-100 dark:from-slate-900 dark:to-indigo-950 px-4">
-        <motion.div
+        <div className="min-h-screen bg-slate-50 px-4 py-10">
+        <div className="mx-auto w-full max-w-xl">
+            <div className="flex items-center justify-between gap-4">
+            <a href={`/quiz/kelas/${kelas}/`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-indigo-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Daftar quiz
+            </a>
+            <div className="text-sm font-bold text-slate-700">
+                Soal {current + 1} <span className="font-medium text-slate-400">dari {total}</span>
+            </div>
+            </div>
+
+            <Progress value={progress} className="mt-3 h-1.5" />
+
+            <motion.div
             key={current}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.4 }}
-            className="w-full sm:w-[450px]"
-        >
-            <Card className="p-6 rounded-2xl shadow-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-indigo-200 dark:border-slate-800">
-            <CardHeader className="text-center mb-2">
-                <h2 className="text-xl font-bold text-indigo-700 mb-2">
-                Soal {current + 1} dari {total}
-                </h2>
-                <Progress value={progress} className="h-2 rounded-full" />
-            </CardHeader>
-
-            <CardContent>
-                <div className="mb-6 text-center font-medium text-lg text-slate-700 dark:text-slate-300">
-                {isMath(q.question) ? (
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
+            >
+            <Card className="mt-5 border-slate-200 shadow-sm">
+                <CardHeader className="pb-2">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">{quiz.title}</h2>
+                </CardHeader>
+                <CardContent>
+                <div className="text-lg font-semibold text-slate-900 leading-relaxed">
+                    {isMath(q.question) && BlockMath ? (
                     <BlockMath math={q.question} strict="ignore" />
-                ) : (
+                    ) : (
                     <p>{q.question}</p>
-                )}
+                    )}
                 </div>
 
-                <div className="flex flex-col gap-3">
-                {q.options.map((opt, i) => {
+                <div className="mt-5 flex flex-col gap-2.5" role="radiogroup" aria-label={`Pilihan jawaban soal ${current + 1}`}>
+                    {(q.options || []).map((opt, i) => {
                     const selected = answers[current] === i;
-                    const buttonClass = selected
-                    ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md"
-                    : "border-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800";
-
                     return (
-                    <motion.button
+                        <button
                         key={i}
-                        whileTap={{ scale: 0.97 }}
-                        className={`w-full text-left px-4 py-3 rounded-xl font-medium border transition-all duration-200 ${buttonClass}`}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
                         onClick={() => handleSelect(current, i)}
-                    >
-                        {isMath(opt) ? <BlockMath math={opt} strict="ignore"/> : opt}
-                    </motion.button>
+                        className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
+                            selected
+                            ? "border-indigo-600 bg-indigo-50 text-indigo-900 ring-1 ring-indigo-600"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                        }`}
+                        >
+                        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-extrabold ${
+                            selected ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"
+                        }`}>
+                            {OPTION_LETTERS[i] || i + 1}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                            {isMath(opt) && BlockMath ? <BlockMath math={opt} strict="ignore" /> : opt}
+                        </span>
+                        </button>
                     );
-                })}
+                    })}
                 </div>
-            </CardContent>
+                </CardContent>
 
-            <CardFooter className="flex justify-end mt-6">
+                <CardFooter className="flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
                 <Button
-                onClick={handleNext}
-                className="rounded bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow hover:shadow-lg hover:scale-[1.03] transition-transform"
+                    variant="ghost"
+                    onClick={handleBack}
+                    disabled={current === 0}
+                    className="text-slate-600 disabled:opacity-40"
                 >
-                {current < total - 1 ? "Selanjutnya →" : "Selesai ✅"}
+                    Kembali
                 </Button>
-            </CardFooter>
+                <Button
+                    onClick={handleNext}
+                    className="bg-indigo-600 font-semibold text-white hover:bg-indigo-700"
+                >
+                    {current < total - 1 ? "Soal Berikutnya" : "Selesaikan Quiz"}
+                </Button>
+                </CardFooter>
             </Card>
-        </motion.div>
+            </motion.div>
+        </div>
         </div>
     );
 }

@@ -1,170 +1,100 @@
 ---
-// src\components\Hero.astro
-const { 
-  heading = 'Selamat Datang', 
+const {
+  heading = 'Asyik Math',
   second_heading = 'E-Learning',
-  sub = 'Belajar Matematika SMA jadi lebih interaktif', 
-  ctaText = 'Mulai Belajar', 
-  ctaHref = '/materi/kelas' 
+  sub = 'Video pembelajaran dan quiz interaktif matematika SMA — terstruktur per kelas, dengan pembahasan yang fokus ke pemahaman konsep.',
+  ctaText = 'Mulai Belajar',
+  ctaHref = '/materi/',
+  stats = { materi: 0, quiz: 0 },
 } = Astro.props;
 ---
+<section class="relative overflow-hidden bg-slate-50">
+  <!-- pola grid halus -->
+  <div class="absolute inset-0" style="background-image: linear-gradient(to right, rgb(15 23 42 / 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgb(15 23 42 / 0.04) 1px, transparent 1px); background-size: 44px 44px; mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 55%, transparent 100%);"></div>
 
-<section class="relative overflow-hidden">
-  <!-- Background gradient -->
-  <div class="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-blue-50 animate-gradient"></div>
+  <div class="container mx-auto px-4 md:px-6 py-16 md:py-24 relative">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <!-- KIRI -->
+      <div>
+        <span class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 text-xs font-semibold text-indigo-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Matematika SMA &bull; Kelas 10&ndash;12
+        </span>
 
-  <!-- Floating background shapes -->
-  <div class="absolute inset-0 overflow-hidden z-0">
-    <div class="float-shape bg-blue-300 top-20 left-10 size-12 opacity-20 blur-xl" style="animation-delay: 1s"></div>
-    <div class="float-shape bg-amber-300 bottom-16 right-20 size-16 opacity-25 blur-2xl" style="animation-delay: 2s"></div>
-    <div class="float-shape bg-pink-300 top-1/3 right-1/3 size-10 opacity-30 blur-lg" style="animation-delay: 3s"></div>
-  </div>
-
-  <!-- Content -->
-  <div class="container mx-auto px-4 py-20 relative z-10">
-    <div class="grid md:grid-cols-2 gap-10 items-center">
-      <!-- LEFT -->
-      <div class="space-y-6">
-        <h1 class="text-5xl font-extrabold text-slate-900 leading-tight hero-anim delay-0 drop-shadow-sm">
-          {heading}<span class="ml-2 text-amber-400"> + </span>{second_heading}
+        <h1 class="mt-5 text-4xl md:text-5xl font-extrabold leading-[1.1] tracking-tight text-slate-900">
+          {heading} <span class="text-indigo-600">{second_heading}</span>
         </h1>
 
-        <p class="mt-4 text-lg text-slate-600 max-w-xl hero-anim delay-100">
+        <p class="mt-4 text-base md:text-lg text-slate-600 max-w-xl leading-relaxed">
           {sub}
         </p>
 
-        <div class="mt-8 flex gap-3 hero-anim delay-200">
-          <a href={ctaHref} class="btn-primary shadow-md hover:shadow-lg hover:-translate-y-0.5 transition">{ctaText}</a>
-          <a href="/quiz/" class="btn-ghost shadow-sm hover:shadow-md hover:-translate-y-0.5 transition">Coba Quiz Demo</a>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={ctaHref} class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition">
+            {ctaText}
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="/quiz/" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition">
+            Lihat Quiz
+          </a>
         </div>
 
-        <div class="mt-10 flex items-center gap-8 hero-anim delay-300">
+        <dl class="mt-10 flex items-center gap-8 border-t border-slate-200 pt-6">
+          <div>
+            <dt class="text-2xl font-extrabold text-slate-900">{stats.materi}</dt>
+            <dd class="mt-0.5 text-xs font-medium text-slate-500">Materi</dd>
+          </div>
+          <div class="h-10 w-px bg-slate-200"></div>
+          <div>
+            <dt class="text-2xl font-extrabold text-slate-900">{stats.quiz}</dt>
+            <dd class="mt-0.5 text-xs font-medium text-slate-500">Quiz</dd>
+          </div>
+          <div class="h-10 w-px bg-slate-200"></div>
+          <div>
+            <dt class="text-2xl font-extrabold text-slate-900">3</dt>
+            <dd class="mt-0.5 text-xs font-medium text-slate-500">Tingkat kelas</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- KANAN -->
+      <div class="relative">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-3 h-3 rounded-full bg-blue-400 shadow-sm animate-pulse"></div>
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
             <div>
-              <div class="text-sm font-semibold">3 Video / Kelas</div>
-              <div class="text-xs text-slate-500">Materi ringkas & visual</div>
+              <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Quiz Event</div>
+              <div class="font-bold text-slate-900">Uji kemampuanmu</div>
             </div>
           </div>
+          <p class="mt-4 text-sm text-slate-600 leading-relaxed">
+            Ikuti event quiz berjadwal dengan kode akses, kejar peringkat teratas di leaderboard.
+          </p>
+          <a href="/quiz/" class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition">
+            Ikut Quiz
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
 
-          <div class="flex items-center gap-3">
-            <div class="w-3 h-3 rounded-full bg-amber-300 shadow-sm animate-pulse"></div>
-            <div>
-              <div class="text-sm font-semibold">Quiz Level 1–5</div>
-              <div class="text-xs text-slate-500">Progress terukur</div>
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
             </div>
+            <div class="mt-3 text-sm font-bold text-slate-900">Video pembahasan</div>
+            <div class="mt-0.5 text-xs text-slate-500">Setiap materi ada videonya</div>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg>
+            </div>
+            <div class="mt-3 text-sm font-bold text-slate-900">Nilai tersimpan</div>
+            <div class="mt-0.5 text-xs text-slate-500">Hasil quiz tercatat otomatis</div>
           </div>
         </div>
       </div>
-
-      <!-- RIGHT -->
-      <div class="relative hero-anim delay-350">
-        <!-- Card utama: ajakan ikut event -->
-        <div class="bg-white/70 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
-          <div class="flex flex-col gap-4 text-center">
-            <div class="text-xs text-slate-500 uppercase tracking-wide">Event Aktif</div>
-            <div class="text-2xl font-bold text-slate-900">Quiz Event 🎯</div>
-            <p class="text-sm text-slate-600 leading-relaxed">
-              Uji kemampuanmu dan menjadi peringkat pertama!  
-              Cukup masukkan username untuk bergabung dan dapatkan nilaimu!.
-            </p>
-
-            <div class="mt-4 flex justify-center">
-              <a
-                href="/quiz/join"
-                class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
-              >
-                🚀 Join Sekarang
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card kecil: progress & leaderboard
-        <div class="mt-5 grid grid-cols-2 gap-3">
-          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
-            <div class="text-sm font-medium text-slate-900">Leaderboard</div>
-            <div class="text-xs text-slate-500 mt-1">Lihat peringkat mingguan</div>
-          </div>
-          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
-            <div class="text-sm font-medium text-slate-900">Hadiah & Badge</div>
-            <div class="text-xs text-slate-500 mt-1">Kumpulkan reward tiap event</div>
-          </div>
-        </div> -->
-      </div>
-
-      <!-- <div class="relative hero-anim delay-350">
-        <div class="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-xs text-slate-500">Preview Video</div>
-              <div class="mt-3 font-semibold text-slate-900">Bangun Ruang — Kelas 10</div>
-              <div class="mt-2 text-sm text-slate-600">3:20 • Visual explanation</div>
-            </div>
-            <div class="flex flex-col items-center">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white shadow-md hover:scale-110 transition-transform">▶</div>
-              <div class="mt-2 text-xs text-slate-500">Play</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-5 grid grid-cols-2 gap-3">
-          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
-            <div class="text-sm font-medium text-slate-900">Aljabar</div>
-            <div class="text-xs text-slate-500 mt-1">Persamaan & fungsi</div>
-          </div>
-          <div class="bg-white rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition">
-            <div class="text-sm font-medium text-slate-900">Geometri</div>
-            <div class="text-xs text-slate-500 mt-1">Bentuk & ruang</div>
-          </div>
-        </div>
-      </div> -->
     </div>
   </div>
-
-  <style>
-    /* Floating geometric shapes */
-    .float-shape {
-      position: absolute;
-      border-radius: 50%;
-      animation: floatAnim 10s ease-in-out infinite;
-      will-change: transform;
-    }
-
-    @keyframes floatAnim {
-      0%, 100% {
-        transform: translateY(0) rotate(0deg) scale(1);
-      }
-      50% {
-        transform: translateY(-25px) rotate(10deg) scale(1.05);
-      }
-    }
-
-    /* Gradient background animation */
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .animate-gradient {
-      background-size: 200% 200%;
-      animation: gradientMove 12s ease infinite;
-    }
-
-    /* Fade Up Animation */
-    @keyframes heroFadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .hero-anim {
-      opacity: 0;
-      transform: translateY(20px);
-      animation-fill-mode: forwards;
-    }
-    .hero-anim.delay-0 { animation: heroFadeUp .8s ease .0s both; }
-    .hero-anim.delay-100 { animation: heroFadeUp .8s ease .1s both; }
-    .hero-anim.delay-200 { animation: heroFadeUp .8s ease .2s both; }
-    .hero-anim.delay-300 { animation: heroFadeUp .8s ease .3s both; }
-    .hero-anim.delay-350 { animation: heroFadeUp 1s cubic-bezier(.2,.9,.3,1) .35s both; }
-  </style>
 </section>

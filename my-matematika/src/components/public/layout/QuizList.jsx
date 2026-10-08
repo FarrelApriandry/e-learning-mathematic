@@ -1,16 +1,17 @@
 // src/components/materi/QuizList.jsx
 import { useEffect, useState } from "react"
 import { fetchQuizMateri } from "../../../lib/apiClient.js"
+import { CardSkeleton, EmptyState, QuizCard } from "./cards.jsx"
 
 export default function QuizList({ kelas }) {
     const [quiz, setQuiz] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchQuizList = async () => {
+        const load = async () => {
         try {
             const data = await fetchQuizMateri({ class: kelas, status: "published" })
-            setQuiz(data)
+            setQuiz(Array.isArray(data) ? data : [])
         } catch (err) {
             console.error(err)
         } finally {
@@ -18,34 +19,25 @@ export default function QuizList({ kelas }) {
         }
         }
 
-        fetchQuizList()
+        load()
     }, [kelas])
 
-    if (loading)
-        return <p className="text-center text-gray-500">Loading quiz...</p>
+    if (loading) return <CardSkeleton />
 
     if (quiz.length === 0)
-        return <p className="text-center text-gray-500">Belum ada quiz untuk kelas {kelas}.</p>
+        return (
+        <EmptyState
+            title={`Belum ada quiz kelas ${kelas}`}
+            hint="Quiz untuk kelas ini sedang disiapkan. Coba pelajari materinya dulu."
+            actionHref="/materi/"
+            actionLabel="Lihat Materi"
+        />
+        )
 
     return (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {quiz.map((q_m) => (
-            <a
-            key={q_m.id}
-            href={`/quiz/kelas/${kelas}/${q_m.id}`}
-            className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
-            >
-                <div>
-                    <h2 className="text-xl font-semibold mb-2 text-indigo-700 group-hover:text-indigo-800">
-                    {q_m.title}
-                    </h2>
-                    <p className="text-gray-500 text-sm mb-4">{q_m.description}</p>
-                    <p className="text-gray-400 text-xs line-clamp-2">{q_m.materi}</p>
-                </div>
-                <span className="mt-4 inline-flex items-center gap-2 text-indigo-600 font-medium group-hover:translate-x-1 transition-transform">
-                    Ikuti Quiz →
-                </span>
-            </a>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {quiz.map((q) => (
+            <QuizCard key={q.id} item={q} kelas={kelas} />
         ))}
         </div>
     )

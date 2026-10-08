@@ -1,45 +1,61 @@
 ---
-// src\pages\index.astro
 import MainLayout from "../layouts/MainLayout.astro";
 import Hero from "../components/Hero.astro";
 import MateriSection from "../components/public/layout/MateriSection.jsx";
-import IntroPopup from "../components/public/IntroPopup.jsx";
+import { getDb } from "../db/index.js";
+import { sql } from "drizzle-orm";
+
+let totalMateri = 0;
+let totalQuiz = 0;
+try {
+  const db = getDb();
+  const [row] = await db.execute(sql`
+    SELECT
+      (SELECT count(*) FROM materi) AS m,
+      ((SELECT count(*) FROM quiz_materi) + (SELECT count(*) FROM quiz_global) + (SELECT count(*) FROM quiz_event)) AS q
+  `);
+  totalMateri = Number(row?.m ?? 0);
+  totalQuiz = Number(row?.q ?? 0);
+} catch { /* DB belum siap — tampilkan 0 */ }
 ---
 
 <MainLayout title="Beranda">
-  <IntroPopup client:load />
-  
-  <Hero 
-    heading="Asyik Math" 
+  <Hero
+    heading="Asyik Math"
     second_heading="E-Learning"
-    sub="Video pembelajaran + quiz interaktif — fokus ke pemahaman, bukan hafalan." 
-    ctaText="Mulai Sekarang" 
-    ctaHref="/materi/" 
+    sub="Video pembelajaran dan quiz interaktif matematika SMA — terstruktur per kelas, dengan pembahasan yang fokus ke pemahaman konsep."
+    ctaText="Mulai Belajar"
+    ctaHref="/materi/"
+    stats={{ materi: totalMateri, quiz: totalQuiz }}
   />
 
-  <!-- Feature strip -->
-  <section class="container mx-auto px-4 py-8">
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="card p-6">
-        <div class="text-sm text-amber-400 font-semibold">Video</div>
-        <h3 class="mt-3 text-lg font-bold">Pembelajaran Visual</h3>
-        <p class="mt-2 text-slate-600 text-sm">Setiap topik ditemani video singkat yang mudah dipahami.</p>
+  <!-- Cara kerja -->
+  <section class="border-t border-slate-200 bg-white">
+    <div class="container mx-auto px-4 md:px-6 py-14">
+      <div class="max-w-2xl">
+        <div class="text-xs font-bold uppercase tracking-widest text-indigo-600">Cara kerja</div>
+        <h2 class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">Tiga langkah, langsung bisa dipakai belajar</h2>
       </div>
-
-      <div class="card p-6">
-        <div class="text-sm text-amber-400 font-semibold">Quiz</div>
-        <h3 class="mt-3 text-lg font-bold">Level 1 - 5</h3>
-        <p class="mt-2 text-slate-600 text-sm">Nilai dan progress tersimpan (nanti via Firebase).</p>
-      </div>
-
-      <div class="card p-6">
-        <div class="text-sm text-amber-400 font-semibold">Praktis</div>
-        <h3 class="mt-3 text-lg font-bold">Ringkas & Fokus</h3>
-        <p class="mt-2 text-slate-600 text-sm">Materi diringkas supaya efisien untuk presentasi tugas.</p>
-      </div>
+      <ol class="mt-8 grid gap-4 md:grid-cols-3">
+        <li class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sm font-extrabold text-indigo-600 shadow-sm ring-1 ring-slate-200">1</div>
+          <h3 class="mt-4 font-bold text-slate-900">Pilih kelas</h3>
+          <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">Materi dikelompokkan per tingkat — Kelas 10, 11, dan 12 — sesuai kurikulum SMA.</p>
+        </li>
+        <li class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sm font-extrabold text-indigo-600 shadow-sm ring-1 ring-slate-200">2</div>
+          <h3 class="mt-4 font-bold text-slate-900">Tonton dan baca</h3>
+          <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">Setiap topik dilengkapi video pembahasan dan ringkasan materi yang bisa diunduh.</p>
+        </li>
+        <li class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sm font-extrabold text-indigo-600 shadow-sm ring-1 ring-slate-200">3</div>
+          <h3 class="mt-4 font-bold text-slate-900">Uji dengan quiz</h3>
+          <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">Kerjakan quiz per materi atau ikut quiz event berjadwal, nilai tersimpan otomatis.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
-  <!-- Materi Publik (replaces static "Pilih Kelas") -->
-  <MateriSection client:load/>
+  <!-- Materi terbaru -->
+  <MateriSection client:load />
 </MainLayout>

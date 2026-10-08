@@ -1,14 +1,48 @@
 ---
-// src\components\Footer.astro
 ---
-<footer class="bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-gray-100">
-  <div class="container mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
-    <div class="text-sm text-slate-700">
-      © {new Date().getFullYear()} Math E-Learning — dibuat oleh <span class="text-indigo-900 font-semibold">Priharti Ningrum Harahap</span>.
+<footer class="border-t border-slate-200 bg-white">
+  <div class="container mx-auto px-4 md:px-6 py-10">
+    <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+      <div class="max-w-sm">
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 7-3.6 9.4a1 1 0 0 1-1.8 0L9 7"/><path d="M6 19h12"/></svg>
+          </div>
+          <div class="text-sm font-extrabold tracking-tight text-slate-900">Asyik Math</div>
+        </div>
+        <p class="mt-3 text-sm text-slate-500 leading-relaxed">Platform pembelajaran matematika SMA: video pembahasan dan quiz interaktif per kelas.</p>
+      </div>
+      <nav class="grid grid-cols-2 gap-8 text-sm sm:grid-cols-3">
+        <div>
+          <div class="font-bold text-slate-900">Belajar</div>
+          <ul class="mt-3 space-y-2.5 text-slate-500">
+            <li><a href="/materi/" class="hover:text-indigo-600 transition">Semua materi</a></li>
+            <li><a href="/materi/kelas/10/" class="hover:text-indigo-600 transition">Kelas 10</a></li>
+            <li><a href="/materi/kelas/11/" class="hover:text-indigo-600 transition">Kelas 11</a></li>
+            <li><a href="/materi/kelas/12/" class="hover:text-indigo-600 transition">Kelas 12</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-bold text-slate-900">Quiz</div>
+          <ul class="mt-3 space-y-2.5 text-slate-500">
+            <li><a href="/quiz/" class="hover:text-indigo-600 transition">Semua quiz</a></li>
+            <li><a href="/quiz/kelas/10/" class="hover:text-indigo-600 transition">Quiz kelas 10</a></li>
+            <li><a href="/quiz/kategori/" class="hover:text-indigo-600 transition">Kategori</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-bold text-slate-900">Lainnya</div>
+          <ul class="mt-3 space-y-2.5 text-slate-500">
+            <li><a href="/about" class="hover:text-indigo-600 transition">Tentang</a></li>
+            <li><a href="/contact" class="hover:text-indigo-600 transition">Kontak</a></li>
+            <li><a href="/privacy" class="hover:text-indigo-600 transition">Kebijakan privasi</a></li>
+          </ul>
+        </div>
+      </nav>
     </div>
-    <div class="flex items-center gap-4">
-      <a href="/privacy" class="btn-ghost">Kebijakan</a>
-      <a href="/contact" class="btn-ghost">Hubungi</a>
+    <div class="mt-10 flex flex-col gap-2 border-t border-slate-100 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+      <div>&copy; {new Date().getFullYear()} Asyik Math E-Learning.</div>
+      <div>Dibuat oleh <span class="font-semibold text-slate-500">Priharti Ningrum Harahap</span>.</div>
     </div>
   </div>
 </footer>

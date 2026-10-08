@@ -8,9 +8,16 @@ export default function IntroPopup() {
     const [open, setOpen] = useState(false)
 
     useEffect(() => {
+        // Tampilkan sekali per sesi browser
+        if (sessionStorage.getItem("intro_seen")) return
         const timer = setTimeout(() => setOpen(true), 1000)
         return () => clearTimeout(timer)
     }, [])
+
+    const close = () => {
+        sessionStorage.setItem("intro_seen", "1")
+        setOpen(false)
+    }
 
     return (
         <AnimatePresence>
@@ -29,20 +36,21 @@ export default function IntroPopup() {
                 transition={{ type: "spring", stiffness: 120 }}
             >
             {/* Bagian Card */}
-                <Card className="border-0 rounded-2xl shadow-lg overflow-hidden">
+                <Card className="border-slate-200 rounded-2xl shadow-lg overflow-hidden">
                 {/* Bagian Card Header */}
-                <CardHeader className="flex flex-col items-start space-y-2 p-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                <CardHeader className="flex flex-col items-start space-y-2 p-6 bg-slate-900 text-white">
                     <div className="flex justify-between items-center w-full">
-                    <CardTitle className="md:text-2xl font-bold text-lg">Cara Menggunakan Website</CardTitle>
+                    <CardTitle className="md:text-2xl font-bold text-lg">Cara menggunakan Asyik Math</CardTitle>
                     <button
-                        onClick={() => setOpen(false)}
+                        onClick={close}
+                        aria-label="Tutup panduan"
                         className="text-white/70 hover:text-white transition"
                     >
                         <X size={20} />
                     </button>
                     </div>
-                    <p className="md:text-sm text-xs text-white/90">
-                    Panduan singkat penggunaan AsyikMath Plus — belajar interaktif lewat video & quiz!
+                    <p className="md:text-sm text-xs text-white/70">
+                    Panduan singkat: pilih kelas, tonton video, lalu uji pemahamanmu lewat quiz.
                     </p>
                 </CardHeader>
 
@@ -58,7 +66,7 @@ export default function IntroPopup() {
                     </div>
 
                     <div className="flex justify-end">
-                    <Button onClick={() => setOpen(false)} variant="outline">
+                    <Button onClick={close} variant="outline">
                         Tutup
                     </Button>
                     </div>

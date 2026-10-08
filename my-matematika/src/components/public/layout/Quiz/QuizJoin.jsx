@@ -1,82 +1,93 @@
 // src/components/public/layout/Quiz/QuizJoin.jsx
 import { useState } from "react";
-import { Card, CardHeader, CardContent, CardFooter } from "../../../ui/card";
+import { Card, CardHeader, CardContent } from "../../../ui/card";
 import { Input } from "../../../ui/input";
 import { Button } from "../../../ui/button";
 import { Label } from "../../../ui/label";
-import { LogIn, KeyRound } from "lucide-react";
 
 export default function QuizJoin({ quizType = "materi", quizId, kelas }) {
     const [name, setName] = useState("");
     const [code, setCode] = useState("");
+    const [error, setError] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!name.trim()) return alert("Masukkan nama dulu ya!");
-        if (quizType === "event" && !code.trim()) return alert("Masukkan kode event dulu!");
+        if (!name.trim()) return setError("Isi namamu dulu sebelum mulai.");
+        if (quizType === "event" && !code.trim()) return setError("Masukkan kode event yang kamu terima dari penyelenggara.");
+        setError("");
 
-        sessionStorage.setItem("quiz_username", name);
-        if (quizType === "event") sessionStorage.setItem("quiz_event_code", code);
+        sessionStorage.setItem("quiz_username", name.trim());
+        if (quizType === "event") sessionStorage.setItem("quiz_event_code", code.trim());
 
         window.location.href = `/quiz/kelas/${kelas}/${quizId}/start`;
     };
 
     const quizLabel = {
-        materi: "Kuis Materi",
-        global: "Kuis Global",
-        event: "Kuis Event",
+        materi: "Quiz Materi",
+        global: "Quiz Global",
+        event: "Quiz Event",
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-950">
-            <Card className="w-[350px] shadow-lg border border-slate-300 dark:border-slate-800">
-                <CardHeader>
-                    <h2 className="text-xl font-semibold text-center flex items-center justify-center gap-2">
-                        <LogIn className="w-5 h-5 text-primary" /> {quizLabel[quizType]}
-                    </h2>
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
+            <Card className="w-full max-w-sm border-slate-200 shadow-sm">
+                <CardHeader className="pb-2">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                    </div>
+                    <h1 className="mt-4 text-center text-xl font-extrabold tracking-tight text-slate-900">
+                        {quizLabel[quizType]}
+                    </h1>
+                    <p className="mt-1 text-center text-sm text-slate-500">
+                        {quizType === "event"
+                            ? "Masukkan nama dan kode event untuk bergabung."
+                            : "Masukkan namamu — hasil quiz tersimpan atas nama ini."}
+                    </p>
                 </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <CardContent className="pt-4">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div>
-                            <Label className="text-sm text-indigo-400" htmlFor="name">Masukkan Namamu</Label>
+                            <Label htmlFor="name" className="text-sm font-semibold text-slate-700">Nama</Label>
                             <Input
                                 id="name"
-                                className="rounded-lg"
-                                placeholder="Masukkan nama kamu"
+                                className="mt-1.5"
+                                placeholder="cth. Budi Santoso"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                maxLength={60}
                             />
                         </div>
 
                         {quizType === "event" && (
                             <div>
-                                <Label htmlFor="code" className="flex items-center gap-1">
-                                    <KeyRound className="w-4 h-4 text-primary" /> Event Code
-                                </Label>
+                                <Label htmlFor="code" className="text-sm font-semibold text-slate-700">Kode event</Label>
                                 <Input
                                     id="code"
-                                    placeholder="Masukkan kode event"
+                                    className="mt-1.5 tracking-widest"
+                                    placeholder="6 digit angka"
                                     value={code}
-                                    onChange={(e) => setCode(e.target.value)}
+                                    onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                                    inputMode="numeric"
+                                    maxLength={6}
                                 />
                             </div>
                         )}
 
+                        {error && (
+                            <p role="alert" className="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm font-medium text-red-700 ring-1 ring-inset ring-red-200">
+                                {error}
+                            </p>
+                        )}
+
                         <Button
                             type="submit"
-                            className="w-full py-2 bg-gradient-to-r text-white from-blue-600 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
+                            className="w-full bg-indigo-600 py-2.5 font-semibold text-white hover:bg-indigo-700"
                         >
-                            Join Now
+                            Mulai Quiz
                         </Button>
                     </form>
                 </CardContent>
-
-                <CardFooter className="text-xs text-slate-300 text-center text-muted-foreground">
-                    {quizType === "event"
-                        ? "Gunakan kode unik dari penyelenggara event."
-                        : "Langsung mulai kuis tanpa kode."}
-                </CardFooter>
             </Card>
         </div>
     );
