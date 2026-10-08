@@ -67,7 +67,7 @@ export default function Sidebar() {
   ];
 
   const linkBase =
-    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
+    "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
 
   const isActive = (path) => activePath === path;
 
@@ -91,7 +91,7 @@ export default function Sidebar() {
         {isOpen && (
           <motion.div
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-slate-950/50 z-40 md:hidden"
+            className="fixed inset-0 bg-slate-900/30 z-40 md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -108,7 +108,7 @@ export default function Sidebar() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -260, opacity: 0 }}
             transition={{ type: "tween", duration: 0.2 }}
-            className="fixed md:static top-0 left-0 h-screen md:h-auto z-50 bg-slate-900 text-slate-300 w-64 flex flex-col justify-between border-r border-slate-800"
+            className="fixed md:static top-0 left-0 h-screen md:h-auto z-50 bg-white text-slate-600 w-64 flex flex-col justify-between border-r border-slate-200"
           >
             {/* Top: Logo & Nav */}
             <div className="p-4">
@@ -119,7 +119,7 @@ export default function Sidebar() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 7-3.6 9.4a1 1 0 0 1-1.8 0L9 7"/><path d="M6 19h12"/></svg>
                   </span>
                   <span className="leading-tight">
-                    <span className="block text-sm font-extrabold tracking-tight text-white">
+                    <span className="block text-sm font-extrabold tracking-tight text-slate-900">
                       Asyik Math
                     </span>
                     <span className="block text-[11px] font-medium text-slate-400">
@@ -129,7 +129,7 @@ export default function Sidebar() {
                 </a>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-md hover:bg-slate-800 text-slate-400 md:hidden"
+                  className="p-2 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600 md:hidden"
                   aria-label="Tutup menu"
                 >
                   <X className="w-5 h-5" />
@@ -138,69 +138,79 @@ export default function Sidebar() {
 
               {/* Navigation */}
               <nav className="flex flex-col gap-0.5">
-                {navItems.map(({ icon: Icon, text, path, children }) => (
-                  <div key={text}>
-                    {/* item utama */}
-                    <div
-                      onClick={() =>
-                        children
-                          ? setOpenDropdown(
-                              openDropdown === text ? null : text
-                            )
-                          : (window.location.href = path)
-                      }
-                      className={`${linkBase} cursor-pointer ${
-                        isActive(path) || children?.some((c) => isActive(c.path))
-                          ? "bg-indigo-600 text-white"
-                          : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5 shrink-0" />
-                      <span>{text}</span>
-                      {children &&
-                        (openDropdown === text ? (
-                          <ChevronDown className="ml-auto w-4 h-4 text-slate-400" />
-                        ) : (
-                          <ChevronRight className="ml-auto w-4 h-4 text-slate-400" />
-                        ))}
-                    </div>
-
-                    {/* dropdown items */}
-                    <AnimatePresence>
-                      {openDropdown === text && children && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="ml-4 mt-0.5 mb-1 flex flex-col gap-0.5 overflow-hidden border-l border-slate-800 pl-3"
-                        >
-                          {children.map((child) => (
-                            <a
-                              key={child.path}
-                              href={child.path}
-                              className={`block px-3 py-2 rounded-md text-sm transition-colors ${
-                                isActive(child.path)
-                                  ? "bg-indigo-600/20 text-white"
-                                  : "text-slate-400 hover:text-white hover:bg-slate-800"
-                              }`}
-                            >
-                              {child.text}
-                            </a>
+                {navItems.map(({ icon: Icon, text, path, children }) => {
+                  const active =
+                    isActive(path) || children?.some((c) => isActive(c.path));
+                  return (
+                    <div key={text}>
+                      {/* item utama */}
+                      <div
+                        onClick={() =>
+                          children
+                            ? setOpenDropdown(
+                                openDropdown === text ? null : text
+                              )
+                            : (window.location.href = path)
+                        }
+                        className={`${linkBase} cursor-pointer ${
+                          active
+                            ? "bg-indigo-50 text-indigo-700"
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        }`}
+                      >
+                        {active && (
+                          <span
+                            aria-hidden="true"
+                            className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-indigo-600"
+                          />
+                        )}
+                        <Icon className="w-5 h-5 shrink-0" />
+                        <span>{text}</span>
+                        {children &&
+                          (openDropdown === text ? (
+                            <ChevronDown className="ml-auto w-4 h-4 text-slate-400" />
+                          ) : (
+                            <ChevronRight className="ml-auto w-4 h-4 text-slate-400" />
                           ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
+                      </div>
+
+                      {/* dropdown items */}
+                      <AnimatePresence>
+                        {openDropdown === text && children && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="ml-4 mt-0.5 mb-1 flex flex-col gap-0.5 overflow-hidden border-l border-slate-200 pl-3"
+                          >
+                            {children.map((child) => (
+                              <a
+                                key={child.path}
+                                href={child.path}
+                                className={`block px-3 py-2 rounded-md text-sm transition-colors ${
+                                  isActive(child.path)
+                                    ? "bg-indigo-100 font-semibold text-indigo-800"
+                                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                }`}
+                              >
+                                {child.text}
+                              </a>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </nav>
             </div>
 
             {/* Bottom: Logout */}
-            <div className="p-4 border-t border-slate-800">
+            <div className="p-4 border-t border-slate-200">
               <div
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition-colors"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 cursor-pointer transition-colors"
               >
                 <LogOut className="w-5 h-5" />
                 <span>Keluar</span>
