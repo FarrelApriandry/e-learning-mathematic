@@ -19,6 +19,8 @@ import {
     SelectValue,
 } from "../../select";
 import { toast } from "../../../../hooks/use-toast";
+import { updateQuizEvent } from "../../../../lib/apiClient.js";
+import { getStoredUser } from "../../../../lib/authClient.js";
 
 export default function QuizEventEditModal({ isOpen, onClose, event, onUpdate }) {
     const [formData, setFormData] = useState({});
@@ -63,9 +65,8 @@ export default function QuizEventEditModal({ isOpen, onClose, event, onUpdate })
         setLoading(true);
 
         try {
-        const payload = {
-            id: event.id,
-            updates: {
+        const user = getStoredUser();
+        const formUpdates = {
             ...formData,
             start_time: formData.start_time
                 ? new Date(formData.start_time)
@@ -73,18 +74,8 @@ export default function QuizEventEditModal({ isOpen, onClose, event, onUpdate })
             end_time: formData.end_time
                 ? new Date(formData.end_time)
                 : null,
-            },
-            last_modified_by: "admin",
         };
-
-        const res = await fetch("/api/quiz_event", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) throw new Error("Gagal memperbarui event.");
-        const data = await res.json();
+        const data = await updateQuizEvent(event.id, formUpdates, user?.email || "admin");
 
         toast({
             title: "Berhasil ✅",

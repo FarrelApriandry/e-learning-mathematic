@@ -7,6 +7,7 @@ import {
   quizEvent,
   quizEventQuestion,
   quizParticipant,
+  users,
 } from "../db/schema.js";
 
 /**
@@ -77,4 +78,4 @@ export async function generateAccessCode() {
   throw new Error("Gagal generate access code unik");
 }
 
-export { eq, and, desc, asc, sql, materi, quizMateri, quizGlobal, quizEvent, quizEventQuestion, quizParticipant };
+export { eq, and, desc, asc, sql, materi, quizMateri, quizGlobal, quizEvent, quizEventQuestion, quizParticipant, users };

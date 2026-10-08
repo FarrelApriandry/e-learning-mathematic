@@ -1,4 +1,5 @@
 // src/pages/api/quiz_global.js
+import { verifyAdmin } from "../../lib/auth.js";
 import {
   ok,
   okMessage,
@@ -54,6 +55,8 @@ export async function GET({ request }) {
 // ===============================
 export async function POST({ request }) {
   try {
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const body = await readBody(request);
 
     const [row] = await db
@@ -81,6 +84,8 @@ export async function POST({ request }) {
 // ===============================
 export async function PUT({ request }) {
   try {
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const body = await readBody(request);
     const id = toId(body.id);
     if (!id) return badRequest("ID quiz tidak ditemukan.");
@@ -108,6 +113,8 @@ export async function PUT({ request }) {
 // ===============================
 export async function DELETE({ request }) {
   try {
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const body = await readBody(request);
     const id = toId(body.id);
     if (!id) return badRequest("ID quiz tidak ditemukan.");

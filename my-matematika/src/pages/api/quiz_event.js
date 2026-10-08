@@ -1,4 +1,5 @@
 // src/pages/api/quiz_event.js
+import { verifyAdmin } from "../../lib/auth.js";
 import {
   ok,
   okMessage,
@@ -50,6 +51,9 @@ function sanitizeUpdates(updates = {}) {
 // ===============================
 export async function GET({ request }) {
   try {
+    // Daftar event hanya untuk admin (berisi access_code).
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const { searchParams } = new URL(request.url);
     const id = toId(searchParams.get("id"));
 
@@ -79,6 +83,8 @@ export async function GET({ request }) {
 // ===============================
 export async function POST({ request }) {
   try {
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const body = await readBody(request);
     const access_code = await generateAccessCode();
 
@@ -115,6 +121,8 @@ export async function POST({ request }) {
 // ===============================
 export async function PUT({ request }) {
   try {
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const body = await readBody(request);
     const id = toId(body.id);
     if (!id) return badRequest("id required");
@@ -138,6 +146,8 @@ export async function PUT({ request }) {
 // ===============================
 export async function DELETE({ request }) {
   try {
+    const gate = verifyAdmin(request);
+    if (gate.error) return gate.error;
     const body = await readBody(request);
     const id = toId(body.id);
     if (!id) return badRequest("id required");

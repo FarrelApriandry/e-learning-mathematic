@@ -21,6 +21,8 @@ import {
     SelectValue,
 } from "../../select"
 import { toast } from "../../../../hooks/use-toast"
+import { createQuizEvent } from "../../../../lib/apiClient.js";
+import { getStoredUser } from "../../../../lib/authClient.js";
 
 export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
     const [formData, setFormData] = useState({
@@ -52,14 +54,13 @@ export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
         setLoading(true)
 
         try {
-            const res = await fetch("/api/quiz_event", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            })
-
-            if (!res.ok) throw new Error("Gagal membuat event.")
-            const data = await res.json()
+            const user = getStoredUser();
+            const payload = {
+                ...formData,
+                created_by: user?.email || "admin",
+                last_modified_by: user?.email || "admin",
+            };
+            const data = await createQuizEvent(payload);
 
             toast({
                 title: "Berhasil 🎉",
@@ -79,14 +80,12 @@ export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
                 shuffle_options: false,
                 is_public_results: true,
                 max_participants: "",
-                created_by: user ? user.email || user.uid : "unknown",
-                last_modified_by: user ? user.email || user.uid : "unknown",
             })
         } catch (err) {
             console.error(err)
             toast({
                 title: "Gagal ❌",
-                description: "Terjadi kesalahan saat membuat event =" + {err},
+                description: "Terjadi kesalahan saat membuat event: " + (err.message || err),
                 variant: "destructive",
             });
         } finally {

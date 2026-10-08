@@ -1,6 +1,6 @@
 // src/components/layout/quiz/QuizMateriTable.jsx
 import { useEffect, useState } from "react";
-import { fetchQuizMateri, updateQuizMateri } from "../../../../lib/apiClient.js";
+import { fetchQuizMateri, updateQuizMateri, deleteQuizMateri } from "../../../../lib/apiClient.js";
 import { Check, Trash2, Eye, Pencil } from "lucide-react";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import { toast } from "../../../../hooks/use-toast";
@@ -80,28 +80,13 @@ export default function QuizMateriTable(externalRefresh ) {
     }
 
     const handleConfirmDelete = async () => {
-        console.log("🧹 Menghapus materi:", selectedMateri); // 🔍 Tambah log
-    
         try {
-        const res = await fetch("/api/quiz_materi", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: selectedMateri.id }),
-        });
-    
-        console.log("📡 Status:", res.status); // 🔍 Tambah log
-        const result = await res.json();
-        console.log("📦 Response:", result); // 🔍 Tambah log
-    
-        if (result.success) {
-            setQuizList((prev) => prev.filter((item) => item.id !== selectedMateri.id));
-            toast({ title: `Materi "${selectedMateri.title}" berhasil dihapus!` });
-        } else {
-            toast({ title: `Gagal menghapus: ${result.message}`, variant: "destructive" });
-        }
+        await deleteQuizMateri(selectedMateri.id);
+        setQuizList((prev) => prev.filter((item) => item.id !== selectedMateri.id));
+        toast({ title: `Quiz "${selectedMateri.title}" berhasil dihapus!` });
         } catch (err) {
-        console.error("❌ Fetch error:", err);
-            toast({ title: "Terjadi kesalahan saat menghapus materi.", variant: "destructive" });
+        console.error("❌ Delete error:", err);
+            toast({ title: err.message || "Terjadi kesalahan saat menghapus quiz.", variant: "destructive" });
         } finally {
         setOpenConfirmModal(false);
         setSelectedMateri(null);

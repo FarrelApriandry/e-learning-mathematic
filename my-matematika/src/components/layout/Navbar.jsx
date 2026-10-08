@@ -1,6 +1,6 @@
 import { UserCircle2, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../../lib/firebaseConfig";
+import { getStoredUser } from "../../lib/authClient.js";
 // import { useLocation } from "react-router-dom";
 
 export default function Navbar() {
@@ -24,7 +24,7 @@ export default function Navbar() {
   const currentPage = pathParts[1] ? pathParts[1].charAt(0).toUpperCase() + pathParts[1].slice(1) : "HOME";
 
   useEffect(() => {
-    const u = getCurrentUser ? getCurrentUser() : null;
+    const u = getStoredUser();
     if (u) setUserEmail(u.email);
   }, []);
 

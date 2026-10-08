@@ -1,21 +1,20 @@
 // src/components/ProtectedRoute.jsx
 import { useEffect, useState } from "react";
-import { auth, onAuthStateChanged } from "../lib/firebaseConfig";
+import { fetchMe } from "../lib/authClient.js";
 
 export default function ProtectedRoute({ children }) {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        if (!currentUser) {
-            window.location.href = "/admin/";
-        } else {
-            setUser(currentUser);
-        }
-        setLoading(false);
+        fetchMe().then((currentUser) => {
+            if (!currentUser) {
+                window.location.href = "/admin/";
+            } else {
+                setUser(currentUser);
+            }
+            setLoading(false);
         });
-        return () => unsubscribe();
     }, []);
 
     if (loading) {

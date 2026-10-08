@@ -14,6 +14,7 @@ import { Input } from "../input";
 import { Textarea } from "../textarea";
 import { BookOpen, ExternalLink, FileText, X, Save } from "lucide-react";
 import { toast } from "../../../hooks/use-toast";
+import { updateMateri } from "../../../lib/apiClient.js";
 
 export default function MateriEditDialog({ isOpen, onClose, materi, onSave }) {
   const [formData, setFormData] = useState({
@@ -44,23 +45,10 @@ export default function MateriEditDialog({ isOpen, onClose, materi, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/materi", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: materi.id, ...formData }),
-      });
-
-      const result = await res.json();
-      if (result.success) {
-        toast({ title: "Materi berhasil diperbarui!" });
-        onSave?.(formData);
-        onClose();
-      } else {
-        toast({
-          title: `Gagal memperbarui: ${result.message}`,
-          variant: "destructive",
-        });
-      }
+      await updateMateri(materi.id, formData);
+      toast({ title: "Materi berhasil diperbarui!" });
+      onSave?.(formData);
+      onClose();
     } catch (err) {
       console.error("Update error:", err);
       toast({

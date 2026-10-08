@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchMateri } from "../../lib/apiClient.js";
+import { fetchMateri, deleteMateri } from "../../lib/apiClient.js";
 import { Eye, Trash2, Search, Pencil } from "lucide-react";
 import MateriAddModal from "../ui/materi/MateriFormModal.jsx";
 import MateriDetailModal from "../ui/materi/MateriDetailModal.jsx";
@@ -55,28 +55,13 @@ export default function MateriTableFull() {
     };
 
     const handleConfirmDelete = async () => {
-        console.log("🧹 Menghapus materi:", selectedMateri); // 🔍 Tambah log
-    
         try {
-        const res = await fetch("/api/materi", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: selectedMateri.id }),
-        });
-    
-        console.log("📡 Status:", res.status); // 🔍 Tambah log
-        const result = await res.json();
-        console.log("📦 Response:", result); // 🔍 Tambah log
-    
-        if (result.success) {
-            setMateriList((prev) => prev.filter((item) => item.id !== selectedMateri.id));
-            toast({ title: `Materi "${selectedMateri.title}" berhasil dihapus!` });
-        } else {
-            toast({ title: `Gagal menghapus: ${result.message}`, variant: "destructive" });
-        }
+        await deleteMateri(selectedMateri.id);
+        setMateriList((prev) => prev.filter((item) => item.id !== selectedMateri.id));
+        toast({ title: `Materi "${selectedMateri.title}" berhasil dihapus!` });
         } catch (err) {
-        console.error("❌ Fetch error:", err);
-        toast({ title: "Terjadi kesalahan saat menghapus materi.", variant: "destructive" });
+        console.error("❌ Delete error:", err);
+        toast({ title: err.message || "Terjadi kesalahan saat menghapus materi.", variant: "destructive" });
         } finally {
         setOpenConfirmModal(false);
         setSelectedMateri(null);

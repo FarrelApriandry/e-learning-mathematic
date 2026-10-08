@@ -1,6 +1,5 @@
 // src/pages/admin/Login.jsx
-import { auth, onAuthStateChanged } from "../../lib/firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { fetchMe, loginAdmin } from "../../lib/authClient.js";
 import { useState, useEffect } from "react";
 import AuthCard from "../ui/AuthCard";
 import AlertToast from "../ui/AlertToast";
@@ -11,24 +10,24 @@ const Login = () => {
     const [alert, setAlert] = useState(null); // {type, message}
 
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, (user) => {
-            // Cegah redirect terlalu cepat: biarin toast tampil dulu
+        // Kalau sudah login, langsung ke dashboard
+        fetchMe().then((user) => {
             if (user && !window._redirecting) {
                 window._redirecting = true;
-                setTimeout(() => {
-                    window.location.href = "/admin/dashboard/";
-                }, 1600); // delay 1.6 detik agar toast muncul
+                window.location.href = "/admin/dashboard/";
             }
         });
-        return () => unsub();
     }, []);
     const handleLogin = async (e) => {
         e.preventDefault();
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                await loginAdmin(email, password);
                 setAlert({ type: "success", message: "Login berhasil! Mengalihkan..." });
+                setTimeout(() => {
+                    window.location.href = "/admin/dashboard/";
+                }, 1200);
             } catch (err) {
-                setAlert({ type: "error", message: "Email atau password salah." });
+                setAlert({ type: "error", message: err.message || "Email atau password salah." });
             }
         // Auto-hide alert setelah 3.5 detik
         setTimeout(() => setAlert(null), 3500);

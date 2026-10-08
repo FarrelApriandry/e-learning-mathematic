@@ -7,6 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "seed:admin": "node scripts/seed-admin.js",
+    "migrate:firestore": "node scripts/migrate-firestore.js",
     "tailwind": "node ./node_modules/tailwindcss/lib/cli.js"
   },
   "dependencies": {
@@ -24,6 +26,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-toast": "^1.2.15",
     "astro": "^5.14.1",
+    "bcryptjs": "^3.0.3",
     "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -31,6 +34,7 @@
     "firebase": "^12.4.0",
     "firebase-admin": "^13.5.0",
     "framer-motion": "^12.23.24",
+    "jsonwebtoken": "^9.0.3",
     "katex": "^0.16.25",
     "lucide-react": "^0.545.0",
     "postgres": "^3.4.9",

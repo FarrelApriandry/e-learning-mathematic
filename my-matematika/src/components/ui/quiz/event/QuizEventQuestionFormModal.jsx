@@ -12,6 +12,7 @@ import { Button } from "../../button";
 import { Textarea } from "../../textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../../select";
 import { toast } from "../../../../hooks/use-toast";
+import { createEventQuestions } from "../../../../lib/apiClient.js";
 
 export default function QuizEventQuestionFormModal({
     isOpen,
@@ -45,13 +46,7 @@ export default function QuizEventQuestionFormModal({
         setLoading(true);
 
         try {
-        const res = await fetch("/api/quiz_event_question", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ eventId, questions }),
-        });
-
-        if (!res.ok) throw new Error("Gagal menambahkan soal");
+        await createEventQuestions(eventId, questions);
 
         toast({
             title: "Berhasil!",

@@ -1,4 +1,5 @@
 // src/pages/api/quiz_event_question.js
+import { verifyAdmin } from "../../lib/auth.js";
 import {
   ok,
   okMessage,

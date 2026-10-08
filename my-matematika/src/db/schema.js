@@ -176,13 +176,15 @@ export const quizParticipant = pgTable(
 // =====================
 // USERS
 // =====================
-// Koleksi `users` hanya dipakai untuk hitung "Total Pengguna" di dashboard.
-// Nanti dibilangin otomatis dari tabel ini kalau auth sudah migrasi ke sini.
+// Koleksi `users` — juga dipakai untuk auth admin mandiri (bcrypt + JWT).
+// Admin dibuat via `npm run seed:admin` (baca ADMIN_EMAIL/ADMIN_PASSWORD dari env).
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   uid: text("uid").unique().notNull(),
   email: text("email"),
   display_name: text("display_name"),
+  // hash bcrypt untuk login admin mandiri; null = user legacy tanpa password
+  password_hash: text("password_hash"),
   role: text("role").default("student").notNull(), // student | admin
   created_at: timestamp("created_at", { withTimezone: true })
     .default(sql`now()`)

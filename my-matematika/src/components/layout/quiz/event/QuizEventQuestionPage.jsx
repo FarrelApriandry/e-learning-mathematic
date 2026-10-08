@@ -6,6 +6,7 @@ import { Button } from "../../../ui/button"
 import { Card, CardHeader, CardContent, CardFooter } from "../../../ui/card"
 import { Badge } from "../../../ui/badge"
 import QuizEventQuestionFormModal from "../../../ui/quiz/event/QuizEventQuestionFormModal"
+import { fetchEventQuestions } from "../../../../lib/apiClient.js";
 
 export default function QuizEventQuestionPage({ eventId, onBack }) {
     const [questions, setQuestions] = useState([])
@@ -14,9 +15,8 @@ export default function QuizEventQuestionPage({ eventId, onBack }) {
 
     const fetchQuestions = async () => {
         setLoading(true)
-        const res = await fetch(`/api/quiz_event_question?eventId=${eventId}`)
-        const data = await res.json()
-        setQuestions(data.data || [])
+        const data = await fetchEventQuestions(eventId)
+        setQuestions(data || [])
         setLoading(false)
     }
 

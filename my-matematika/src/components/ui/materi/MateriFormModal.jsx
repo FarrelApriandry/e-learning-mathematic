@@ -8,6 +8,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from ".
 import { RadioGroup, RadioGroupItem } from "../radio-group";
 import { BookPlus } from "lucide-react";
 import { toast } from "../../../hooks/use-toast"
+import { fetchMateri, createMateri } from "../../../lib/apiClient.js";
 
 function toTitleCase(str) {
   return str
@@ -30,19 +31,18 @@ export default function MateriAddModal({ open, setOpen }) {
 
   useEffect(() => {
     if (!open) return;
-    const fetchMateri = async () => {
+    const fetchMateriList = async () => {
       try {
-        const res = await fetch("/api/materi");
-        const data = await res.json();
-        if (data.success && Array.isArray(data.data)) {
-          const uniqueMateri = [...new Set(data.data.map((item) => item.materi))];
+        const data = await fetchMateri();
+        if (Array.isArray(data)) {
+          const uniqueMateri = [...new Set(data.map((item) => item.materi))];
           setMateriList(uniqueMateri);
         }
       } catch (err) {
         console.error("Gagal ambil data materi:", err);
       }
     };
-    fetchMateri();
+    fetchMateriList();
   }, [open]);
 
   const handleChange = (e) => {
@@ -63,37 +63,23 @@ export default function MateriAddModal({ open, setOpen }) {
   delete payload.materiOption;
 
     try {
-      const res = await fetch("/api/materi", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      await createMateri(payload);
 
-      const data = await res.json();
-
-      if (data.success) {
-        toast({
-          title: "Berhasil 🎉",
-          description: "Materi berhasil dibuat!",
-          variant: "default",
-        });
-        setTimeout(() => {
-          setOpen(false);
-          window.location.reload();
-        }, 1200);
-      } else {
-        toast({
-          title: "Gagal ❌",
-          description: "Materi gagal dibuat!",
-          variant: "destructive",
-      });
-      }
-    } catch {
       toast({
         title: "Berhasil 🎉",
-        description: "Event berhasil dibuat!",
+        description: "Materi berhasil dibuat!",
+        variant: "default",
+      });
+      setTimeout(() => {
+        setOpen(false);
+        window.location.reload();
+      }, 1200);
+    } catch (err) {
+      toast({
+        title: "Gagal ❌",
+        description: err.message || "Materi gagal dibuat!",
         variant: "destructive",
-    });
+      });
     } finally {
       setLoading(false);
     }

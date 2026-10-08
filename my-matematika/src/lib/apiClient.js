@@ -1,16 +1,32 @@
 /**
  * Client-side helper buat komponen React — pengganti akses Firestore langsung.
  * Semua lewat fetch ke /api/* (format response: { success, data?, message? }).
+ * Token admin (localStorage) dikirim otomatis via Authorization: Bearer.
  *
  * Konvensi penting: ID sekarang ANGKA (serial Postgres), bukan string Firestore.
  * Fungsi fetch* di sini sudah menormalkan timestamp ke string ISO dan
  * menyediakan alias field yang dipakai komponen lama.
  */
 
+function adminToken() {
+  try {
+    return typeof localStorage !== "undefined"
+      ? localStorage.getItem("elmath_admin_token")
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 async function request(path, options = {}) {
+  const token = adminToken();
   const res = await fetch(path, {
-    headers: { "Content-Type": "application/json" },
     ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {}),
+    },
   });
   let json = null;
   try {

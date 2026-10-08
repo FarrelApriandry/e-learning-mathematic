@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { auth, signOut } from "../../lib/firebaseConfig";
+import { logoutAdmin } from "../../lib/authClient.js";
 import {
   LayoutDashboard,
   BookCopy,
@@ -73,14 +73,8 @@ export default function Sidebar() {
 
   const isActive = (path) => activePath === path;
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      console.log("[Auth] User logged out successfully");
-      window.location.href = "/admin"; // redirect ke halaman login
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const handleLogout = () => {
+    logoutAdmin(); // hapus token + redirect ke /admin/
   };
 
   return (
