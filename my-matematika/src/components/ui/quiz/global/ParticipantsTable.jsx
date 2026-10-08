@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../../../lib/firebaseConfig";
+import { fetchParticipants } from "../../../../lib/apiClient.js";
 import { Table, TableHead, TableHeader, TableBody, TableRow, TableCell } from "../../table";
 import { Button } from "../../button";
 import { ArrowLeft, RefreshCw } from "lucide-react";
@@ -8,12 +7,17 @@ import { ArrowLeft, RefreshCw } from "lucide-react";
 export default function ParticipantsTable({ quiz, onBack }) {
     const [participants, setParticipants] = useState([]);
 
+    const loadParticipants = async () => {
+        try {
+            const data = await fetchParticipants("global", quiz.id);
+            setParticipants(data);
+        } catch (err) {
+            console.error("Gagal memuat peserta:", err);
+        }
+    };
+
     useEffect(() => {
-        const fetchParticipants = async () => {
-        const snap = await getDocs(collection(db, "quiz_global", quiz.id, "participants"));
-        setParticipants(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-        };
-        fetchParticipants();
+        loadParticipants();
     }, [quiz.id]);
 
     return (
@@ -27,7 +31,7 @@ export default function ParticipantsTable({ quiz, onBack }) {
             <Button variant="outline" onClick={onBack}>
                 <ArrowLeft className="w-4 h-4 mr-2" /> Kembali
             </Button>
-            <Button variant="outline" onClick={() => window.location.reload()}>
+            <Button variant="outline" onClick={loadParticipants}>
                 <RefreshCw className="w-4 h-4 mr-2" /> Refresh
             </Button>
             </div>
@@ -50,11 +54,11 @@ export default function ParticipantsTable({ quiz, onBack }) {
                     participants.map((p, i) => (
                         <TableRow key={p.id}>
                             <TableCell>{i + 1}</TableCell>
-                            <TableCell>{p.name}</TableCell>
-                            <TableCell>{(p.score / p.total) * 100}</TableCell>
+                            <TableCell>{p.name || p.uid || "-"}</TableCell>
+                            <TableCell>{p.total > 0 ? Math.round((p.score / p.total) * 100) : 0}</TableCell>
                             <TableCell>{p.total}</TableCell>
                             <TableCell>{p.score}</TableCell>
-                            <TableCell>{new Date(p.createdAt.seconds * 1000).toLocaleString()}</TableCell>
+                            <TableCell>{p.joined_at ? new Date(p.joined_at).toLocaleString() : "-"}</TableCell>
                         </TableRow>
                 ))
                 ) : (

@@ -1,20 +1,15 @@
 // src/components/materi/QuizList.jsx
 import { useEffect, useState } from "react"
-import { db } from "../../../lib/firebaseConfig"
-import { collection, getDocs } from "firebase/firestore"
+import { fetchQuizMateri } from "../../../lib/apiClient.js"
 
 export default function QuizList({ kelas }) {
     const [quiz, setQuiz] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchQuiz = async () => {
+        const fetchQuizList = async () => {
         try {
-            const colRef = collection(db, "quiz_materi")
-            const snapshot = await getDocs(colRef)
-            const data = snapshot.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }))
-            .filter((m) => m.class === kelas && m.status === "published")
+            const data = await fetchQuizMateri({ class: kelas, status: "published" })
             setQuiz(data)
         } catch (err) {
             console.error(err)
@@ -23,7 +18,7 @@ export default function QuizList({ kelas }) {
         }
         }
 
-        fetchQuiz()
+        fetchQuizList()
     }, [kelas])
 
     if (loading)

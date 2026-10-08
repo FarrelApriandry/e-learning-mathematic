@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../../../lib/firebaseConfig";
+import { fetchQuizEvent } from "../../../../lib/apiClient.js";
 import { Card, CardHeader, CardContent, CardFooter } from "../../card";
 import { Button } from "../../button";
 import { Users } from "lucide-react";
@@ -10,8 +9,12 @@ export default function QuizListCard({ onSelectQuiz }) {
 
     useEffect(() => {
         const fetchQuiz = async () => {
-        const snap = await getDocs(collection(db, "quiz_event"));
-        setQuizList(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+            try {
+                const data = await fetchQuizEvent();
+                setQuizList(data);
+            } catch (err) {
+                console.error("Gagal memuat quiz event:", err);
+            }
         };
         fetchQuiz();
     }, []);

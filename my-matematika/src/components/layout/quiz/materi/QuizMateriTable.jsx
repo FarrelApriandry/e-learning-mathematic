@@ -1,7 +1,6 @@
 // src/components/layout/quiz/QuizMateriTable.jsx
 import { useEffect, useState } from "react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../../../lib/firebaseConfig";
+import { fetchQuizMateri, updateQuizMateri } from "../../../../lib/apiClient.js";
 import { Check, Trash2, Eye, Pencil } from "lucide-react";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import { toast } from "../../../../hooks/use-toast";
@@ -23,12 +22,7 @@ export default function QuizMateriTable(externalRefresh ) {
     const fetchQuiz = async () => {
         setLoading(true);
         try {
-            const quizRef = collection(db, "quiz_materi");
-            const snapshot = await getDocs(quizRef);
-            const data = snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-        }));
+            const data = await fetchQuizMateri();
             setQuizList(data);
         } catch (error) {
             console.error("🔥 Gagal ambil data quiz:", error);
@@ -75,9 +69,14 @@ export default function QuizMateriTable(externalRefresh ) {
     };    
 
     const handleSaveStatus = async (newStatus) => {
-        const quizRef = doc(db, "quiz", selectedQuiz.id);
-        await updateDoc(quizRef, { status: newStatus });
-        toast.success(`Status berhasil diubah menjadi ${newStatus}`);
+        try {
+            await updateQuizMateri(selectedQuiz.id, { status: newStatus });
+            toast({ title: `Status berhasil diubah menjadi ${newStatus}` });
+            await fetchQuiz();
+        } catch (err) {
+            console.error("Gagal ubah status:", err);
+            toast({ title: "Gagal mengubah status", variant: "destructive" });
+        }
     }
 
     const handleConfirmDelete = async () => {
@@ -189,14 +188,14 @@ export default function QuizMateriTable(externalRefresh ) {
                                     <td className="py-3 px-5 text-center text-emerald-700 whitespace-nowrap">
                                         {quiz.created_at
                                             ? new Date(
-                                                    quiz.created_at.seconds * 1000
+                                                    quiz.created_at
                                                 ).toLocaleString("id-ID")
                                             : "-"}
                                     </td>
                                     <td className="py-3 px-5 text-center text-amber-700 whitespace-nowrap">
                                         {quiz.updated_at
                                             ? new Date(
-                                                    quiz.updated_at.seconds * 1000
+                                                    quiz.updated_at
                                                 ).toLocaleString("id-ID")
                                             : "-"}
                                     </td>

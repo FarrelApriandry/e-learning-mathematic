@@ -2,22 +2,22 @@
 export const prerender = false;
 
 import BaseLayout from "../../../../layouts/MainLayout.astro";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../../lib/firebaseConfig";
+import { getDb } from "../../../../db/index.js";
+import { materi } from "../../../../db/schema.js";
+import { eq } from "drizzle-orm";
 import {Download, ScrollText} from "lucide-react";
 
-const id = String(Astro.params.id ?? "");
+const id = Number.parseInt(String(Astro.params.id ?? ""), 10);
 
 let materi: Record<string, any> | null = null;
 
 try {
-        if (!db) throw new Error("Firestore belum terinisialisasi.");
         if (!id) throw new Error("ID materi tidak tersedia di URL.");
 
-        const docRef = doc(db, "materi", id);
-        const docSnap = await getDoc(docRef);
+        const db = getDb();
+        const rows = await db.select().from(materi).where(eq(materi.id, id)).limit(1);
 
-        materi = docSnap.exists() ? { id: docSnap.id, ...(docSnap.data() ?? {}) } : null;
+        materi = rows.length > 0 ? rows[0] : null;
     } catch (error) {
         console.error("Error loading materi:", error);
     materi = null;

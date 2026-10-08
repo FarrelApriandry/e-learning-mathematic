@@ -4,27 +4,27 @@ import StatCard from "../../../components/dashboard/StatCard.jsx";
 import LineChart from "../../../components/charts/LineChart.jsx";
 import MateriTable from "../../../components/layout/MateriTable";
 
-// Firebase imports
-import { db } from "../../../lib/firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+// Drizzle (Neon Postgres) — pengganti Firestore
+import { getDb } from "../../../db/index.js";
+import { sql } from "drizzle-orm";
 
-// 🔹 Fetch Firestore data server-side
+// 🔹 Hitung statistik server-side
 let totalMateri = 0;
 let totalQuiz = 0;
 let totalUsers = 0;
 let recentActivities: any[] = [];
 
 try {
-  const materiSnap = await getDocs(collection(db, "materi"));
-  totalMateri = materiSnap.size;
-
-  const quizMateriSnap = await getDocs(collection(db, "quiz_materi"));
-  const quizGlobalSnap = await getDocs(collection(db, "quiz_global"));
-  const quizEventSnap = await getDocs(collection(db, "quiz_event"));
-  totalQuiz = (quizMateriSnap.size) + (quizGlobalSnap.size) + (quizEventSnap.size) ;
-
-  const userSnap = await getDocs(collection(db, "users"));
-  totalUsers = userSnap.size;
+  const db = getDb();
+  const [row] = await db.execute(sql`
+    SELECT
+      (SELECT count(*) FROM materi) AS total_materi,
+      (SELECT count(*) FROM quiz_materi) + (SELECT count(*) FROM quiz_global) + (SELECT count(*) FROM quiz_event) AS total_quiz,
+      (SELECT count(*) FROM users) AS total_users
+  `);
+  totalMateri = Number(row?.total_materi ?? 0);
+  totalQuiz = Number(row?.total_quiz ?? 0);
+  totalUsers = Number(row?.total_users ?? 0);
 
   recentActivities = [
     {

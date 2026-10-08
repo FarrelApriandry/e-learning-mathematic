@@ -2,8 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../lib/firebaseConfig";
+import { fetchMateri } from "../../lib/apiClient.js";
 import { Eye, Trash2, Search, Pencil } from "lucide-react";
 import MateriAddModal from "../ui/materi/MateriFormModal.jsx";
 import MateriDetailModal from "../ui/materi/MateriDetailModal.jsx";
@@ -27,10 +26,9 @@ export default function MateriTableFull() {
     const [openEditModal, setOpenEditModal] = useState(false);
 
     useEffect(() => {
-        const fetchMateri = async () => {
+        const fetchMateriData = async () => {
         try {
-            const snapshot = await getDocs(collection(db, "materi"));
-            const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+            const data = await fetchMateri();
             setMateriList(data);
         } catch (err) {
             console.error("Gagal memuat data materi:", err);
@@ -38,7 +36,7 @@ export default function MateriTableFull() {
             setLoading(false);
         }
         };
-        fetchMateri();
+        fetchMateriData();
     }, []);
 
     const handleOpenConfirm = (materi) => {

@@ -22,6 +22,7 @@ import {
   and,
   asc,
   quizEvent,
+  quizMateri,
   quizParticipant,
 } from "../../lib/apiHelpers.js";
 import { db } from "../../db/index.js";
@@ -206,8 +207,23 @@ export async function POST({ request }) {
     // ---------- SUBMIT ----------
     if (action === "submit") {
       const answers = body.answers ?? [];
-      const score = body.score ?? 0;
       const total = body.total ?? 0;
+
+      // Skoring server-side: kunci jawaban TIDAK pernah dikirim ke client.
+      let score = body.score ?? 0;
+      if (quizType === "materi") {
+        const [quiz] = await db
+          .select()
+          .from(quizMateri)
+          .where(eq(quizMateri.id, quizId))
+          .limit(1);
+        if (!quiz) return badRequest("Quiz tidak ditemukan");
+        const qs = quiz.questions || [];
+        score = answers.reduce(
+          (acc, a, i) => acc + (a === qs[i]?.answer ? 1 : 0),
+          0
+        );
+      }
 
       if (quizType === "event") {
         if (!uid) return badRequest("uid wajib diisi untuk event");

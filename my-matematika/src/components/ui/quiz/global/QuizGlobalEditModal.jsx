@@ -9,8 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ScrollArea } from "../../scroll-area";
 import { motion } from "framer-motion";
 import { toast } from "../../../../hooks/use-toast";
-import { db } from "../../../../lib/firebaseConfig";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { updateQuizGlobal } from "../../../../lib/apiClient.js";
 import { PlusCircle, Trash2 } from "lucide-react";
 
 export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate }) {
@@ -96,11 +95,7 @@ export default function QuizGlobalEditModal({ isOpen, onClose, quiz, onUpdate })
 
     setLoading(true);
     try {
-      const quizRef = doc(db, "quiz_global", quiz.id);
-      await updateDoc(quizRef, {
-        ...formData,
-        updated_at: serverTimestamp(),
-      });
+      await updateQuizGlobal(quiz.id, formData);
 
       toast({ title: "Quiz berhasil diperbarui!" });
       onUpdate?.({ ...quiz, ...formData });

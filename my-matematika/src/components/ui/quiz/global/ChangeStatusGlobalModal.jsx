@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../dialog";
 import { Button } from "../../button";
 import { CheckCircle, XCircle } from "lucide-react";
-import { db } from "../../../../lib/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
+import { updateQuizGlobal } from "../../../../lib/apiClient.js";
 import { toast } from "../../../../hooks/use-toast";
 
 export default function ChangeStatusModal({ isOpen, onClose, quiz, onStatusUpdated }) {
@@ -17,8 +16,7 @@ export default function ChangeStatusModal({ isOpen, onClose, quiz, onStatusUpdat
 
         setLoading(true);
         try {
-        const quizRef = doc(db, "quiz_global", quiz.id);
-        await updateDoc(quizRef, { status: newStatus });
+        await updateQuizGlobal(quiz.id, { status: newStatus });
 
         toast({
             title: "Status berhasil diubah",

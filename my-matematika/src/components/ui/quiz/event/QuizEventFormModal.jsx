@@ -21,7 +21,6 @@ import {
     SelectValue,
 } from "../../select"
 import { toast } from "../../../../hooks/use-toast"
-import { auth } from "src/lib/firebaseConfig"
 
 export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
     const [formData, setFormData] = useState({
@@ -53,8 +52,6 @@ export default function QuizEventFormModal({ isOpen, onClose, onCreated }) {
         setLoading(true)
 
         try {
-            const user = auth.currentUser;
-
             const res = await fetch("/api/quiz_event", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

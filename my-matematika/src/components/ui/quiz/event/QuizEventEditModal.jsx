@@ -19,7 +19,6 @@ import {
     SelectValue,
 } from "../../select";
 import { toast } from "../../../../hooks/use-toast";
-import { auth } from "src/lib/firebaseConfig";
 
 export default function QuizEventEditModal({ isOpen, onClose, event, onUpdate }) {
     const [formData, setFormData] = useState({});
@@ -64,8 +63,6 @@ export default function QuizEventEditModal({ isOpen, onClose, event, onUpdate })
         setLoading(true);
 
         try {
-        const user = auth.currentUser;
-
         const payload = {
             id: event.id,
             updates: {
@@ -77,7 +74,7 @@ export default function QuizEventEditModal({ isOpen, onClose, event, onUpdate })
                 ? new Date(formData.end_time)
                 : null,
             },
-            last_modified_by: user ? user.email || user.uid : "unknown",
+            last_modified_by: "admin",
         };
 
         const res = await fetch("/api/quiz_event", {

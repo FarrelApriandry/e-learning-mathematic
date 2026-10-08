@@ -1,11 +1,12 @@
 // src/lib/firebaseConfig.js
+// Firebase Auth SAJA (sementara, sampai auth migrasi ke Postgres).
+// Semua data sudah pindah ke Neon Postgres (src/db/) — jangan tambahkan
+// Firestore di sini lagi.
+//
+// Kalau env Firebase belum diisi (mis. dev lokal baru clone), app tetap
+// jalan: auth = null dan komponen harus menangani kasus itu.
+
 import { initializeApp, getApps } from "firebase/app";
-import {
-    getAuth,
-    onAuthStateChanged as _onAuthStateChanged,
-    signOut as _signOut
-} from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
         apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
@@ -17,35 +18,48 @@ const firebaseConfig = {
         measurementId: import.meta.env.PUBLIC_FIREBASE_MEASUREMENT_ID, // optional
     };
 
-    let app;
-    if (!getApps().length) {
-        app = initializeApp(firebaseConfig);
-    } else {
-        app = getApps()[0];
-    }
+const configured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-
+let app = null;
+let auth = null;
+let authModule = null;
 let currentUser = null;
 
-_onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    console.log("[Auth] State changed:", user ? user.email : "No user");
-});
+if (configured) {
+    app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    authModule = await import("firebase/auth");
+    auth = authModule.getAuth(app);
+
+    authModule.onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        console.log("[Auth] State changed:", user ? user.email : "No user");
+    });
+} else {
+    console.warn(
+        "[Auth] PUBLIC_FIREBASE_* belum diisi di .env — login admin nonaktif (data tetap jalan via Neon)."
+    );
+}
+
+export { auth, configured };
 
 export const getCurrentUser = () => currentUser;
 
-export const onAuthStateChanged = _onAuthStateChanged;
-export const signOut = _signOut;
-
-export async function GET() {
-    try {
-        const snapshot = await getDocs(collection(db, "materi"));
-        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        return new Response(JSON.stringify(data), { status: 200 });
-    } catch (err) {
-        console.error(err);
-        return new Response(JSON.stringify([]), { status: 500 });
+export const onAuthStateChanged = (cb) => {
+    if (!auth) {
+        cb(null);
+        return () => {};
     }
-}
+    return authModule.onAuthStateChanged(auth, cb);
+};
+
+export const signOut = (...args) =>
+    auth ? authModule.signOut(...args) : Promise.resolve();
+
+export const signInWithEmailAndPassword = (...args) => {
+    if (!auth)
+        return Promise.reject(
+            new Error("Auth belum dikonfigurasi — isi PUBLIC_FIREBASE_* di .env.")
+        );
+    return authModule.signInWithEmailAndPassword(...args);
+};
+

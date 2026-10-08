@@ -7,8 +7,7 @@ import { Button } from "../../button";
 import { ScrollArea } from "../../scroll-area"; // ⬅️ tambahkan ini
 import { motion } from "framer-motion";
 import { toast } from "../../../../hooks/use-toast";
-import { collection, getDocs, updateDoc, doc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../../../lib/firebaseConfig";
+import { fetchMateri, updateQuizMateri } from "../../../../lib/apiClient.js";
 import { PlusCircle, Trash2 } from "lucide-react";
 
 export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate }) {
@@ -35,19 +34,17 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
                 questions: Array.isArray(quiz.questions) ? quiz.questions : [],
             });
         }
-        const fetchMateri = async () => {
+        const fetchMateriList = async () => {
                 try {
-                const snap = await getDocs(collection(db, "materi"));
-                // Ambil field "materi" dari tiap dokumen
-                const data = snap.docs.map((doc) => doc.data().materi);
-                // Hapus duplikat biar unik
-                const unique = [...new Set(data)];
+                const data = await fetchMateri();
+                // Ambil field "materi" dari tiap baris, hapus duplikat biar unik
+                const unique = [...new Set(data.map((m) => m.materi).filter(Boolean))];
                 setMateriList(unique);
                 } catch (err) {
                 console.error("Gagal ambil data materi:", err);
                 }
             };
-        fetchMateri();
+        fetchMateriList();
     }, [quiz]);
 
     const handleChange = (e) => {
@@ -94,7 +91,6 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
     
         for (let i = 0; i < formData.questions.length; i++) {
         const q = formData.questions[i];
-    g
         if (!q.question.trim()) {
             toast({ title: `Soal ${i + 1} belum diisi!`, variant: "destructive" });
             return;
@@ -113,11 +109,7 @@ export default function QuizMateriEditModal({ isOpen, onClose, quiz, onUpdate })
 
         setLoading(true);
         try {
-        const quizRef = doc(db, "quiz_materi", quiz.id);
-        await updateDoc(quizRef, {
-            ...formData,
-            updated_at: serverTimestamp(),
-        });
+        await updateQuizMateri(quiz.id, formData);
     
         toast({ title: "Quiz berhasil diperbarui!" });
         onUpdate?.({ ...quiz, ...formData });

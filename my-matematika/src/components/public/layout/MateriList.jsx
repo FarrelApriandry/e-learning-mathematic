@@ -1,21 +1,16 @@
 // src/components/materi/MateriList.jsx
 import { useEffect, useState } from "react"
-import { db } from "../../../lib/firebaseConfig"
-import { collection, getDocs } from "firebase/firestore"
+import { fetchMateri } from "../../../lib/apiClient.js"
 
 export default function MateriList({ kelas }) {
     const [materi, setMateri] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchMateri = async () => {
+        const fetchMateriList = async () => {
         try {
-            const colRef = collection(db, "materi")
-            const snapshot = await getDocs(colRef)
-            const data = snapshot.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }))
-            .filter((m) => m.class === kelas)
-            setMateri(data)
+            const data = await fetchMateri()
+            setMateri(data.filter((m) => m.class === kelas))
         } catch (err) {
             console.error(err)
         } finally {
@@ -23,7 +18,7 @@ export default function MateriList({ kelas }) {
         }
         }
 
-        fetchMateri()
+        fetchMateriList()
     }, [kelas])
 
     if (loading)

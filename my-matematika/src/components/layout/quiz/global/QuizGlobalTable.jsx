@@ -1,7 +1,6 @@
 // src/components/layout/quiz/global/QuizGlobalTable.jsx
 import { useEffect, useState } from "react";
-import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "../../../../lib/firebaseConfig";
+import { fetchQuizGlobal, updateQuizGlobal, deleteQuizGlobal } from "../../../../lib/apiClient.js";
 import { Check, Trash2, Eye, Pencil } from "lucide-react";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import { toast } from "../../../../hooks/use-toast";
@@ -22,12 +21,7 @@ export default function QuizGlobalTable() {
     useEffect(() => {
         const fetchQuiz = async () => {
             try {
-                const quizRef = collection(db, "quiz_global");
-                const snapshot = await getDocs(quizRef);
-                const data = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+                const data = await fetchQuizGlobal();
                 setQuizList(data);
             } catch (error) {
                 console.error("🔥 Gagal ambil data quiz global:", error);
@@ -68,14 +62,21 @@ export default function QuizGlobalTable() {
     };    
 
     const handleSaveStatus = async (newStatus) => {
-        const quizRef = doc(db, "quiz_global", selectedQuiz.id);
-        await updateDoc(quizRef, { status: newStatus });
-        toast.success(`Status berhasil diubah menjadi ${newStatus}`);
+        try {
+            await updateQuizGlobal(selectedQuiz.id, { status: newStatus });
+            toast({ title: `Status berhasil diubah menjadi ${newStatus}` });
+            setQuizList((prev) =>
+                prev.map((q) => (q.id === selectedQuiz.id ? { ...q, status: newStatus } : q))
+            );
+        } catch (err) {
+            console.error("Gagal ubah status:", err);
+            toast({ title: "Gagal mengubah status", variant: "destructive" });
+        }
     }
 
     const handleConfirmDelete = async () => {
         try {
-            await deleteDoc(doc(db, "quiz_global", selectedQuiz.id));
+            await deleteQuizGlobal(selectedQuiz.id);
             setQuizList((prev) => prev.filter((item) => item.id !== selectedQuiz.id));
             toast({ title: `Quiz "${selectedQuiz.title}" berhasil dihapus!` });
         } catch (err) {
@@ -166,14 +167,14 @@ export default function QuizGlobalTable() {
                                     <td className="py-3 px-5 text-center text-emerald-700 whitespace-nowrap">
                                         {quiz.created_at
                                             ? new Date(
-                                                    quiz.created_at.seconds * 1000
+                                                    quiz.created_at
                                                 ).toLocaleString("id-ID")
                                             : "-"}
                                     </td>
                                     <td className="py-3 px-5 text-center text-amber-700 whitespace-nowrap">
                                         {quiz.updated_at
                                             ? new Date(
-                                                    quiz.updated_at.seconds * 1000
+                                                    quiz.updated_at
                                                 ).toLocaleString("id-ID")
                                             : "-"}
                                     </td>

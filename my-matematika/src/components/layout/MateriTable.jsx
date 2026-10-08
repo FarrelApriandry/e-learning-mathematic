@@ -1,21 +1,15 @@
 // src/components/layout/MateriTable.jsx
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../lib/firebaseConfig";
+import { fetchMateri } from "../../lib/apiClient.js";
 
 export default function MateriTable() {
     const [materiList, setMateriList] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchMateri = async () => {
+        const fetchMateriData = async () => {
         try {
-            const materiRef = collection(db, "materi");
-            const snapshot = await getDocs(materiRef);
-            const data = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-            }));
+            const data = await fetchMateri();
             setMateriList(data);
         } catch (error) {
             console.error("🔥 Gagal ambil data materi:", error);
@@ -24,7 +18,7 @@ export default function MateriTable() {
         }
         };
 
-        fetchMateri();
+        fetchMateriData();
     }, []);
 
     if (loading) {

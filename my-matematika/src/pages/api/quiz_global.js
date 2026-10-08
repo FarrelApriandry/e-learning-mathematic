@@ -15,22 +15,35 @@ import {
 import { db } from "../../db/index.js";
 
 // ===============================
-// GET — Ambil semua quiz global
+// GET — Ambil semua quiz global, atau 1 via ?id=
 // (kunci jawaban dibuang sebelum ke client)
 // ===============================
-export async function GET() {
+export async function GET({ request }) {
   try {
+    const { searchParams } = new URL(request.url);
+    const id = toId(searchParams.get("id"));
+
+    const strip = (q) => ({
+      ...q,
+      questions: (q.questions || []).map(({ answer, ...rest }) => rest),
+    });
+
+    if (id) {
+      const rows = await db
+        .select()
+        .from(quizGlobal)
+        .where(eq(quizGlobal.id, id))
+        .limit(1);
+      if (rows.length === 0) return badRequest("Quiz tidak ditemukan.");
+      return ok(strip(rows[0]));
+    }
+
     const rows = await db
       .select()
       .from(quizGlobal)
       .orderBy(desc(quizGlobal.created_at));
 
-    const data = rows.map((q) => ({
-      ...q,
-      questions: (q.questions || []).map(({ answer, ...rest }) => rest),
-    }));
-
-    return ok(data);
+    return ok(rows.map(strip));
   } catch (err) {
     return serverError(err, "GET quiz_global");
   }

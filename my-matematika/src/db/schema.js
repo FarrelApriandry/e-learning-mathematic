@@ -54,19 +54,27 @@ export const materi = pgTable(
 // Soal: [{ question, options: [string x4], answer: number }]
 const questionsJson = jsonb("questions").default([]).notNull();
 
-export const quizMateri = pgTable("quiz_materi", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  related_materi: text("related_materi").default("").notNull(),
-  is_public: boolean("is_public").default(false).notNull(),
-  questions: questionsJson,
-  created_at: timestamp("created_at", { withTimezone: true })
-    .default(sql`now()`)
-    .notNull(),
-  updated_at: timestamp("updated_at", { withTimezone: true })
-    .default(sql`now()`)
-    .notNull(),
-});
+export const quizMateri = pgTable(
+  "quiz_materi",
+  {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    description: text("description").default("").notNull(),
+    class: text("class").default("").notNull(), // "10" | "11" | "12"
+    materi: text("materi").default("").notNull(), // topik/bab materi
+    related_materi: text("related_materi").default("").notNull(),
+    is_public: boolean("is_public").default(false).notNull(),
+    status: text("status").default("draft").notNull(), // draft | published | closed
+    questions: questionsJson,
+    created_at: timestamp("created_at", { withTimezone: true })
+      .default(sql`now()`)
+      .notNull(),
+    updated_at: timestamp("updated_at", { withTimezone: true })
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (t) => [index("quiz_materi_class_status_idx").on(t.class, t.status)]
+);
 
 export const quizGlobal = pgTable("quiz_global", {
   id: serial("id").primaryKey(),

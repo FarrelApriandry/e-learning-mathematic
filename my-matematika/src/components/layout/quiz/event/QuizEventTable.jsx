@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 import { Check, Trash2, Eye, Pencil } from "lucide-react";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import { Button } from "../../../ui/button";
-import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { fetchQuizEvent, updateQuizEvent, deleteQuizEvent } from "../../../../lib/apiClient.js";
 import QuizEventDetailModal from "../../../ui/quiz/event/QuizEventDetailModal";
 import ChangeStatusEventModal from "../../../ui/quiz/event/ChangeStatusEventModal";
 import QuizEventQuestionPage from "./QuizEventQuestionPage";
 import QuizEventEditModal from "../../../ui/quiz/event/QuizEventEditModal";
 import { toast } from "../../../../hooks/use-toast";
-import { db } from "../../../../lib/firebaseConfig";
 
 export default function QuizEventTable({ refreshTrigger, onQuestionPageToggle }) {
     const [eventList, setEventList] = useState([]);
@@ -26,12 +25,7 @@ export default function QuizEventTable({ refreshTrigger, onQuestionPageToggle })
     useEffect(() => {
         const fetchQuiz = async () => {
             try {
-                const quizRef = collection(db, "quiz_event");
-                const snapshot = await getDocs(quizRef);
-                const data = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+                const data = await fetchQuizEvent();
                 setEventList(data);
             } catch (error) {
                 console.error("🔥 Gagal ambil data quiz global:", error);
@@ -65,7 +59,7 @@ export default function QuizEventTable({ refreshTrigger, onQuestionPageToggle })
 
     const handleConfirmDelete = async () => {
         try {
-            await deleteDoc(doc(db, "quiz_event", selectedEvent.id));
+            await deleteQuizEvent(selectedEvent.id);
             setEventList((prev) => prev.filter((item) => item.id !== selectedEvent.id));
             toast({ title: `Quiz "${selectedEvent.title}" berhasil dihapus!` });
         } catch (err) {
@@ -85,13 +79,12 @@ export default function QuizEventTable({ refreshTrigger, onQuestionPageToggle })
 
     
     const handleSaveStatus = async (newStatus) => {
-        const quizRef = doc(db, "quiz_event", selectedEvent.id);
-        await updateDoc(quizRef, { status: newStatus });
-        
-        setEventList(prev => 
+        await updateQuizEvent(selectedEvent.id, { status: newStatus }, "admin");
+
+        setEventList(prev =>
             prev.map(e => e.id === selectedEvent.id ? { ...e, status: newStatus } : e)
         );
-        
+
         toast({
             title: "Status berhasil diubah",
             description: `Status event diubah menjadi ${newStatus}`,
@@ -213,12 +206,12 @@ export default function QuizEventTable({ refreshTrigger, onQuestionPageToggle })
                             </td> */}
                             <td className="py-3 px-5 text-center text-emerald-700 whitespace-nowrap">
                                 {event.start_time
-                                ? new Date(event.start_time.seconds * 1000).toLocaleString("id-ID")
+                                ? new Date(event.start_time).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td className="py-3 px-5 text-center text-amber-700 whitespace-nowrap">
                                 {event.end_time
-                                ? new Date(event.end_time.seconds * 1000).toLocaleString("id-ID")
+                                ? new Date(event.end_time).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td className="px-5 py-3 text-center">

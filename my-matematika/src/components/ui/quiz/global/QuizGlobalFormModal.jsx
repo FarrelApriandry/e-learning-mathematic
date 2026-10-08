@@ -18,8 +18,7 @@ import {
   SelectValue,
 } from "../../select"
 import { Textarea } from "../../textarea"
-import { db, auth } from "../../../../lib/firebaseConfig"
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { createQuizGlobal } from "../../../../lib/apiClient.js"
 
 export default function QuizGlobalFormDialog({ isOpen, onClose, onSuccess }) {
   const [title, setTitle] = useState("")
@@ -43,17 +42,12 @@ export default function QuizGlobalFormDialog({ isOpen, onClose, onSuccess }) {
     setLoading(true)
 
     try {
-      const user = auth.currentUser
-
-      await addDoc(collection(db, "quiz_global"), {
+      await createQuizGlobal({
         title,
         category,
         description,
         questions,
-        visibility: "draft",
-        created_by: user ? user.email || user.uid : "unknown",
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp(),
+        visibilty: "draft",
       })
 
       setTitle("")

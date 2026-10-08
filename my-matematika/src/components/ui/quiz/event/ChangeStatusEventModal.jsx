@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../dialog";
 import { Button } from "../../button";
 import { CheckCircle, XCircle } from "lucide-react";
-import { db } from "../../../../lib/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
+import { updateQuizEvent } from "../../../../lib/apiClient.js";
 import { toast } from "../../../../hooks/use-toast";
 
 export default function ChangeStatusEventModal({ isOpen, onClose, event, onStatusUpdated }) {
@@ -17,8 +16,7 @@ export default function ChangeStatusEventModal({ isOpen, onClose, event, onStatu
 
         setLoading(true);
         try {
-        const eventRef = doc(db, "quiz_event", event.id);
-        await updateDoc(eventRef, { status: newStatus });
+        await updateQuizEvent(event.id, { status: newStatus }, "admin");
 
         toast({
             title: "Status berhasil diubah",

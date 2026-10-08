@@ -1,7 +1,6 @@
 // src/components/materi/MateriDetail.jsx
 import { useEffect, useState } from "react"
-import { db } from "../../../lib/firebaseConfig"
-import { doc, getDoc } from "firebase/firestore"
+import { fetchMateriById } from "../../../lib/apiClient.js"
 
 export default function MateriDetail({ id }) {
     const [materi, setMateri] = useState(null)
@@ -10,9 +9,8 @@ export default function MateriDetail({ id }) {
     useEffect(() => {
         const fetchDetail = async () => {
         try {
-            const docRef = doc(db, "materi", id)
-            const snap = await getDoc(docRef)
-            if (snap.exists()) setMateri(snap.data())
+            const data = await fetchMateriById(id)
+            if (data) setMateri(data)
         } catch (err) {
             console.error(err)
         } finally {

@@ -1,8 +1,7 @@
 // src/components/layout/quiz/QuizMateriFormModal.jsx
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { db, auth } from "../../../../lib/firebaseConfig";
-import { collection, addDoc, serverTimestamp, getDocs } from "firebase/firestore";
+import { fetchMateri, createQuizMateri } from "../../../../lib/apiClient.js";
 import { Button } from "../../button";
 import { Input } from "../../input";
 import { Label } from "../../label";
@@ -19,19 +18,18 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
   const [questions, setQuestions] = useState([{ question: "", options: ["", "", "", ""], answer: "" }]);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Ambil daftar materi unik dari Firestore
+  // 🔹 Ambil daftar materi unik dari API
   useEffect(() => {
-    const fetchMateri = async () => {
+    const fetchMateriList = async () => {
       try {
-        const snap = await getDocs(collection(db, "materi"));
-        const data = snap.docs.map((doc) => doc.data().materi);
-        const unique = [...new Set(data)];
+        const data = await fetchMateri();
+        const unique = [...new Set(data.map((m) => m.materi).filter(Boolean))];
         setMateriList(unique);
       } catch (err) {
         console.error("Gagal ambil data materi:", err);
       }
     };
-    fetchMateri();
+    fetchMateriList();
   }, []);
 
   const addQuestion = () => {
@@ -44,24 +42,19 @@ export default function QuizMateriFormModal({ isOpen, onClose, onSuccess}) {
     setQuestions(updated);
   };
 
-  // 🔹 Handle submit ke Firestore
+  // 🔹 Handle submit ke API
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const user = auth.currentUser;
-
-      await addDoc(collection(db, "quiz_materi"), {
+      await createQuizMateri({
         title,
         materi: selectedMateri,
         class: selectedClass,
         description,
         questions,
         status: "draft", // 🔹 otomatis draft
-        created_by: user ? user.email || user.uid : "unknown",
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp(),
       });
 
       // Reset form

@@ -46,10 +46,23 @@ function sanitizeUpdates(updates = {}) {
 }
 
 // ===============================
-// GET — Fetch all quiz events
+// GET — Fetch all quiz events, atau 1 via ?id=
 // ===============================
-export async function GET() {
+export async function GET({ request }) {
   try {
+    const { searchParams } = new URL(request.url);
+    const id = toId(searchParams.get("id"));
+
+    if (id) {
+      const rows = await db
+        .select()
+        .from(quizEvent)
+        .where(eq(quizEvent.id, id))
+        .limit(1);
+      if (rows.length === 0) return badRequest("Event tidak ditemukan.");
+      return ok(rows[0]);
+    }
+
     const data = await db
       .select()
       .from(quizEvent)

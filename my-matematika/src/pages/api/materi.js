@@ -13,10 +13,19 @@ import {
 import { db } from "../../db/index.js";
 
 // ===============================
-// GET — Ambil semua materi
+// GET — Ambil semua materi, atau 1 materi via ?id=
 // ===============================
-export async function GET() {
+export async function GET({ request }) {
   try {
+    const { searchParams } = new URL(request.url);
+    const id = toId(searchParams.get("id"));
+
+    if (id) {
+      const rows = await db.select().from(materi).where(eq(materi.id, id)).limit(1);
+      if (rows.length === 0) return badRequest("Materi tidak ditemukan.");
+      return ok(rows[0]);
+    }
+
     const data = await db
       .select()
       .from(materi)

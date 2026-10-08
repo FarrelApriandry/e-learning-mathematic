@@ -1,12 +1,11 @@
 // src/components/public/layout/Quiz/QuizStart.jsx
 import { useEffect, useState } from "react";
-import { db } from "../../../../lib/firebaseConfig";
 import { Button } from "../../../ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "../../../ui/card";
 import { Progress } from "../../../ui/progress";
 import { Loader2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { doc, getDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { fetchQuizMateri, submitQuizResult } from "../../../../lib/apiClient.js";
 
 // 🔹 Tambahan
 let BlockMath, InlineMath;
@@ -27,9 +26,8 @@ export default function QuizStart({ quizId, kelas }) {
     useEffect(() => {
         const fetchQuiz = async () => {
         try {
-            const ref = doc(db, "quiz_materi", quizId);
-            const snap = await getDoc(ref);
-            if (snap.exists()) setQuiz(snap.data());
+            const data = await fetchQuizMateri({ id: quizId });
+            if (data) setQuiz(data);
         } catch (err) {
             console.error("Error fetch quiz:", err);
         } finally {
@@ -63,19 +61,17 @@ export default function QuizStart({ quizId, kelas }) {
         setAnswers({ ...answers, [qIndex]: optionIndex });
     };
 
-    const saveParticipantResult = async (quizId, name, score, total) => {
+    // Skor dihitung server-side: kirim jawaban, server yang koreksi
+    // (kunci jawaban tidak pernah dikirim ke browser).
+    const saveParticipantResult = async (quizId, name, answerArr, total) => {
         try {
-        const quizRef = doc(db, "quiz_materi", quizId);
-        const participantsRef = collection(quizRef, "participants");
-        await addDoc(participantsRef, {
-            name,
-            score,
-            total,
-            createdAt: serverTimestamp(),
-        });
+        setSaving(true);
+        await submitQuizResult("materi", quizId, name, answerArr, 0, total);
         console.log("✅ Participant result saved!");
         } catch (err) {
         console.error("❌ Error saving participant result:", err);
+        } finally {
+        setSaving(false);
         }
     };
 
@@ -85,12 +81,9 @@ export default function QuizStart({ quizId, kelas }) {
     };
 
     if (finished) {
-        const score = questions.reduce(
-        (acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0),
-        0
-        );
+        const answerArr = questions.map((_, i) => answers[i] ?? -1);
         const username = sessionStorage.getItem("quiz_username") || "Anon";
-        saveParticipantResult(quizId, username, score, total);
+        saveParticipantResult(quizId, username, answerArr, total);
 
         return (
         <motion.div
@@ -110,9 +103,9 @@ export default function QuizStart({ quizId, kelas }) {
             </div>
             <p className="text-lg font-medium mb-2">{username}</p>
             <p className="text-xl mb-6">
-                Skor kamu:
+                Jawaban kamu tersimpan.
                 <span className="ml-2 font-bold text-indigo-600">
-                {score}/{total}
+                {answerArr.filter((a) => a >= 0).length}/{total} terjawab
                 </span>
             </p>
             <Button

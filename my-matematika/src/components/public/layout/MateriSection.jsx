@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../../lib/firebaseConfig";
+import { fetchMateri } from "../../../lib/apiClient.js";
 
 export default function MateriSection() {
     const [materi, setMateri] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchMateri = async () => {
+        const fetchMateriList = async () => {
             try {
-                const ref = collection(db, "materi");
-                const snapshot = await getDocs(ref);
-                const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                const data = await fetchMateri();
                 setMateri(data);
             } catch (err) {
                 console.error("Gagal memuat data materi:", err);
@@ -19,7 +16,7 @@ export default function MateriSection() {
                 setLoading(false);
             }
         };
-        fetchMateri();
+        fetchMateriList();
     }, []);
 
     if (loading) return <p className="text-center text-slate-500 mt-8">Memuat materi...</p>;
