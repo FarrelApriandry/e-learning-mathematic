@@ -60,7 +60,7 @@ export function MateriCard({ item, kelas }) {
   return (
     <a
       href={`/materi/kelas/${kelas}/${item.id}`}
-      className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-indigo-200 hover:shadow-md"
+      className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
     >
       <h3 className="font-bold text-slate-900 leading-snug group-hover:text-indigo-700 transition">
         {item.title}
@@ -87,7 +87,7 @@ export function QuizCard({ item, kelas }) {
   return (
     <a
       href={`/quiz/kelas/${kelas}/${item.id}`}
-      className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-indigo-200 hover:shadow-md"
+      className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
     >
       <h3 className="font-bold text-slate-900 leading-snug group-hover:text-indigo-700 transition">
         {item.title}

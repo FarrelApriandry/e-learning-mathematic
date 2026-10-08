@@ -65,13 +65,16 @@ function ts(value) {
   if (value === null || value === undefined) return value;
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
-  const iso = d.toISOString();
-  // kompatibel dengan pola lama: `x.created_at.seconds * 1000`
-  Object.defineProperty(iso, "seconds", {
+  // Kompatibel dua pola lama sekaligus:
+  //  - `new Date(x.created_at)` / render langsung (Date -> ISO otomatis)
+  //  - `x.created_at.seconds * 1000` (warisan Firestore, komponen admin)
+  // Date object aman buat kedua-duanya; string primitive tidak (strict mode
+  // melempar error saat defineProperty di string).
+  Object.defineProperty(d, "seconds", {
     value: Math.floor(d.getTime() / 1000),
     enumerable: false,
   });
-  return iso;
+  return d;
 }
 
 // ---------- MATERI ----------

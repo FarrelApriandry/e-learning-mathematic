@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { fetchMateri } from "../../../lib/apiClient.js";
+
+// Stagger halus: kartu muncul berurutan 50ms sekali jalan (reveal only)
+const gridVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
+const cardVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
 
 const KELAS_LABEL = { 10: "Kelas 10", 11: "Kelas 11", 12: "Kelas 12" };
 
@@ -71,12 +82,18 @@ export default function MateriSection() {
 
         <div className="mt-8">
           {loading ? <Skeleton /> : materi.length === 0 ? <Empty /> : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              variants={gridVariants}
+              initial="hidden"
+              animate="show"
+            >
               {materi.map((item) => (
-                <a
+                <motion.a
                   key={item.id}
                   href={`/materi/kelas/${item.class || "10"}/${item.id}`}
-                  className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-indigo-200 hover:shadow-md"
+                  variants={cardVariants}
+                  className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
                 >
                   <span className="inline-flex w-fit items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 ring-1 ring-inset ring-indigo-200">
                     {KELAS_LABEL[item.class] || `Kelas ${item.class || "-"}`}
@@ -105,9 +122,9 @@ export default function MateriSection() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </span>
                   </div>
-                </a>
+                </motion.a>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

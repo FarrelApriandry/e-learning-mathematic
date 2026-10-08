@@ -4,6 +4,7 @@ import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import IntroPopup from "../components/public/IntroPopup.jsx";
+import { ClientRouter } from "astro:transitions";
 const { title } = Astro.props;
 const pageTitle = title ? `${title} • AsyikMath E-Learning` : "AsyikMath E-Learning";
 ---
@@ -16,6 +17,7 @@ const pageTitle = title ? `${title} • AsyikMath E-Learning` : "AsyikMath E-Lea
     <meta name="description" content="Platform pembelajaran Matematika SMA: video pembelajaran dan quiz interaktif." />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon.png" />
+    <ClientRouter />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -27,5 +29,28 @@ const pageTitle = title ? `${title} • AsyikMath E-Learning` : "AsyikMath E-Lea
     </div>
     <Footer />
     <IntroPopup client:only="react" />
+
+    <script>
+      // Reveal-on-scroll: elemen .reveal dapet .reveal-visible sekali saat masuk viewport.
+      function initReveal() {
+        const els = document.querySelectorAll(".reveal:not(.reveal-visible)");
+        if (!els.length) return;
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("reveal-visible");
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+        );
+        els.forEach((el) => io.observe(el));
+      }
+      initReveal();
+      // Astro View Transitions: DOM diganti tanpa full reload, jalankan ulang.
+      document.addEventListener("astro:after-swap", initReveal);
+    </script>
   </body>
 </html>

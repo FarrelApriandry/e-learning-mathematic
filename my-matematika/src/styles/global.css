@@ -99,6 +99,46 @@ body{
   animation: fadeIn 0.5s ease-out both;
 }
 
+/* ======================
+   Motion foundation
+   Pola tunggu: rise-in sekali jalan (load atau saat masuk viewport).
+   Hormati prefers-reduced-motion — semua animasi dimatikan.
+   ====================== */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Reveal saat load (hero) — delay via .rise-N */
+.rise { opacity: 0; animation: riseIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.rise-1 { animation-delay: 0.05s; }
+.rise-2 { animation-delay: 0.12s; }
+.rise-3 { animation-delay: 0.19s; }
+.rise-4 { animation-delay: 0.26s; }
+.rise-5 { animation-delay: 0.33s; }
+.rise-6 { animation-delay: 0.4s; }
+
+/* Reveal saat masuk viewport — dipicu IntersectionObserver di MainLayout */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 
 
 @layer base {
