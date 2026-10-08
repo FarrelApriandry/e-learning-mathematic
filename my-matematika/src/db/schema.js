@@ -192,6 +192,19 @@ export const users = pgTable("users", {
 });
 
 // =====================
+// SITE SETTINGS
+// =====================
+// Key-value store untuk pengaturan situs (video tutorial, pengumuman, dll).
+// Key publik dibatasi lewat whitelist di src/pages/api/settings.js.
+export const siteSettings = pgTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value"),
+  updated_at: timestamp("updated_at", { withTimezone: true })
+    .default(sql`now()`)
+    .notNull(),
+});
+
+// =====================
 // INDEXES
 // =====================
 // Index didefinisikan langsung di masing-masing tabel di atas (drizzle-kit

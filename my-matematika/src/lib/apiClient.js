@@ -40,6 +40,11 @@ async function request(path, options = {}) {
   return json;
 }
 
+// Versi publik dari request(): dipakai komponen non-admin
+export async function apiRequest(path, options = {}) {
+  return request(path, options);
+}
+
 /** Normalkan baris Postgres ke bentuk yang diharapkan komponen lama. */
 function normalize(row) {
   if (!row || typeof row !== "object") return row;
