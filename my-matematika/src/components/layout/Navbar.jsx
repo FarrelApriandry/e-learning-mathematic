@@ -1,60 +1,59 @@
-import { UserCircle2, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getStoredUser } from "../../lib/authClient.js";
-// import { useLocation } from "react-router-dom";
+
+// Judul halaman yang ramah, bukan kapitalisasi path mentah
+const PAGE_TITLES = {
+  dashboard: "Dashboard",
+  materi: "Materi",
+  quiz_materi: "Quiz Materi",
+  quiz_global: "Quiz Global",
+  quiz_event: "Quiz Event",
+  pesan: "Masukan",
+  settings: "Pengaturan",
+};
 
 export default function Navbar() {
-  const [userEmail, setUserEmail] = useState(null);
-
-  // // const pageName = window.location.pathname.split("/")[1] || "home";
-  // const location = useLocation();
-  // const [currentPage, setCurrentPage] = useState("");
-
-  // useEffect(() => {
-  //   setCurrentPage(location.pathname.split("/")[1] || "home");
-  // }, [location.pathname]);
-
-  // const pageName = window.location.pathname.split("/")[1] || "home";
-  const pathParts =
-  typeof window !== "undefined"
-    ? window.location.pathname.split("/").filter(Boolean) // hapus elemen kosong
-    : [];
-
-  const parentPage = pathParts[0] ? pathParts[0].charAt(0).toUpperCase() + pathParts[0].slice(1) : "Home";
-  const currentPage = pathParts[1] ? pathParts[1].charAt(0).toUpperCase() + pathParts[1].slice(1) : "HOME";
+  const [userEmail, setUserEmail] = useState("");
+  const [pageTitle, setPageTitle] = useState("Dashboard");
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      const seg = parts[1] ?? "dashboard";
+      setPageTitle(PAGE_TITLES[seg] ?? seg);
+    }
     const u = getStoredUser();
-    if (u) setUserEmail(u.email);
+    if (u?.email) setUserEmail(u.email);
   }, []);
 
   const handleToggle = () => {
-    // broadcast event for sidebar toggle
     window.dispatchEvent(new CustomEvent("toggle-sidebar"));
   };
 
+  const initial = (userEmail || "A").charAt(0).toUpperCase();
+
   return (
-    <header className="w-full border-b border-gray-100 bg-white/70 backdrop-blur-md sticky top-0 z-30">
+    <header className="w-full border-b border-slate-200 bg-white sticky top-0 z-30">
       <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleToggle}
-            className="md:hidden p-2 rounded-md hover:bg-slate-100 transition"
-            aria-label="Open sidebar"
+            className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition"
+            aria-label="Buka menu"
           >
-            <Menu className="w-6 h-6 text-slate-700" />
+            <Menu className="w-5 h-5 text-slate-700" />
           </button>
-          <span className="text-sm font-semibold text-slate-700">{currentPage}</span>
+          <h1 className="text-base font-bold text-slate-900">{pageTitle}</h1>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-sm font-medium text-slate-800">
-              {userEmail ?? "admin@email.com"}
-            </div>
-            <div className="text-xs text-green-600 font-semibold">Active</div>
-          </div>
-          <UserCircle2 className="w-8 h-8 text-slate-400" strokeWidth={1.5} />
+        <div className="flex items-center gap-2.5">
+          <span className="hidden sm:block text-sm font-medium text-slate-600">
+            {userEmail}
+          </span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white">
+            {initial}
+          </span>
         </div>
       </div>
     </header>

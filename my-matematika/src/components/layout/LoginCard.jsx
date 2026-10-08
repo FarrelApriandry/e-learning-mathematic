@@ -7,6 +7,7 @@ import AlertToast from "../ui/AlertToast";
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState(null); // {type, message}
 
     useEffect(() => {
@@ -20,58 +21,80 @@ const Login = () => {
     }, []);
     const handleLogin = async (e) => {
         e.preventDefault();
-            try {
-                await loginAdmin(email, password);
-                setAlert({ type: "success", message: "Login berhasil! Mengalihkan..." });
-                setTimeout(() => {
-                    window.location.href = "/admin/dashboard/";
-                }, 1200);
-            } catch (err) {
-                setAlert({ type: "error", message: err.message || "Email atau password salah." });
-            }
-        // Auto-hide alert setelah 3.5 detik
+        setLoading(true);
+        setAlert(null);
+        try {
+            await loginAdmin(email, password);
+            setAlert({ type: "success", message: "Login berhasil! Mengalihkan..." });
+            setTimeout(() => {
+                window.location.href = "/admin/dashboard/";
+            }, 900);
+        } catch (err) {
+            setAlert({ type: "error", message: err.message || "Email atau password salah." });
+            setLoading(false);
+        }
         setTimeout(() => setAlert(null), 3500);
     };
 
+    const year = new Date().getFullYear();
+
     return (
-        <div class="min-h-screen flex items-center justify-center bg-[var(--bg)] px-6">
-        <div class="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl gap-8">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6 py-10">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl gap-10">
             {/* LEFT: FORM */}
             <AuthCard>
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">A+</div>
+            <div className="flex items-center gap-3 mb-6">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 7-3.6 9.4a1 1 0 0 1-1.8 0L9 7"/><path d="M6 19h12"/></svg>
+                </div>
                 <div>
-                <h1 class="text-xl font-bold">Asyik Math Admin</h1>
-                <p class="text-sm text-slate-500">Panel pengelolaan konten</p>
+                <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Asyik Math Admin</h1>
+                <p className="text-sm text-slate-500">Panel pengelolaan konten</p>
                 </div>
             </div>
 
-            <form onSubmit={handleLogin} class="space-y-4">
-                <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onInput={(e) => setEmail(e.target.value)}
-                class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-                />
-                <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onInput={(e) => setPassword(e.target.value)}
-                class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-                />
-                <button type="submit" class="btn-primary w-full">Masuk</button>
+            <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                    <label htmlFor="admin-email" className="mb-1.5 block text-sm font-medium text-slate-700">Email</label>
+                    <input
+                    id="admin-email"
+                    type="email"
+                    placeholder="admin@admin.id"
+                    value={email}
+                    onInput={(e) => setEmail(e.target.value)}
+                    className="w-full p-3 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    autoComplete="username"
+                    required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="admin-password" className="mb-1.5 block text-sm font-medium text-slate-700">Password</label>
+                    <input
+                    id="admin-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onInput={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    autoComplete="current-password"
+                    required
+                    />
+                </div>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                    {loading ? "Memeriksa..." : "Masuk"}
+                </button>
             </form>
 
-            <p class="text-center text-xs text-slate-400 mt-6">© 2025 Asyik Math E-Learning</p>
+            <p className="text-center text-xs text-slate-400 mt-6">© {year} Asyik Math E-Learning</p>
             </AuthCard>
 
             {/* RIGHT: ILLUSTRATION */}
-            <div class="hidden md:flex flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 items-center justify-center p-8">
-            <img src="/illustrations/adm-login_Illustration.svg" alt="Login Illustration" className="w-3/4 max-w-lg animate-slide-in-left" />
+            <div className="hidden md:flex flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-white p-8">
+            <img src="/illustrations/adm-login_Illustration.svg" alt="Ilustrasi login admin" className="w-3/4 max-w-lg" />
             </div>
         </div>
 

@@ -1,6 +1,9 @@
 // src/components/layout/MateriTable.jsx
+// Ringkasan materi di dashboard (read-only, 5 terbaru)
 import { useEffect, useState } from "react";
 import { fetchMateri } from "../../lib/apiClient.js";
+
+const KELAS_LABEL = { 10: "X", 11: "XI", 12: "XII" };
 
 export default function MateriTable() {
     const [materiList, setMateriList] = useState([]);
@@ -10,9 +13,9 @@ export default function MateriTable() {
         const fetchMateriData = async () => {
         try {
             const data = await fetchMateri();
-            setMateriList(data);
+            setMateriList(Array.isArray(data) ? data.slice(0, 5) : []);
         } catch (error) {
-            console.error("🔥 Gagal ambil data materi:", error);
+            console.error("Gagal ambil data materi:", error);
         } finally {
             setLoading(false);
         }
@@ -21,82 +24,68 @@ export default function MateriTable() {
         fetchMateriData();
     }, []);
 
-    if (loading) {
-        return (
-        <div className="p-6 text-center text-slate-500 animate-pulse">
-            Memuat data materi...
-        </div>
-        );
-    }
-
     return (
-        <div className="bg-white rounded-2xl p-6 shadow-md mt-8">
-        <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Daftar Materi</h3>
-            <div className="text-sm text-slate-500">
-            Total: {materiList.length} materi
-            </div>
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900">Materi Terbaru</h3>
+            <a href="/admin/materi/" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                Lihat semua
+            </a>
         </div>
 
+        {loading ? (
+            <div className="space-y-2.5">
+                {[0, 1, 2, 3].map((i) => (
+                    <div key={i} className="h-11 animate-pulse rounded-lg bg-slate-100" />
+                ))}
+            </div>
+        ) : materiList.length === 0 ? (
+            <p className="rounded-lg bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                Belum ada materi. Tambah dari halaman Materi.
+            </p>
+        ) : (
         <div className="overflow-x-auto">
-            <table className="min-w-full text-sm text-left border border-slate-200 rounded-lg">
-            <thead className="bg-slate-100 text-slate-600">
-                <tr>
-                <th className="py-3 px-4 border-b">Judul</th>
-                <th className="py-3 px-4 border-b">Kelas</th>
-                <th className="py-3 px-4 border-b">Deskripsi</th>
-                <th className="py-3 px-4 border-b">Link YouTube</th>
-                <th className="py-3 px-4 border-b">Link PDF</th>
+            <table className="min-w-full text-sm">
+            <thead>
+                <tr className="border-b border-slate-200 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="py-2.5 pr-4">Judul</th>
+                <th className="py-2.5 pr-4">Kelas</th>
+                <th className="py-2.5 pr-4">Konten</th>
+                <th className="py-2.5">Status</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100">
                 {materiList.map((materi) => (
-                <tr
-                    key={materi.id}
-                    className="hover:bg-slate-50 transition-colors"
-                >
-                    <td className="py-2 px-4 border-b font-medium">
+                <tr key={materi.id} className="hover:bg-slate-50">
+                    <td className="py-2.5 pr-4 font-medium text-slate-900">
                     {materi.title || "-"}
                     </td>
-                    <td className="py-2 px-4 border-b">
-                    {materi.class || "-"}
+                    <td className="py-2.5 pr-4">
+                        <span className="inline-block rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700">
+                            {KELAS_LABEL[materi.class] ?? materi.class ?? "-"}
+                        </span>
                     </td>
-                    <td className="py-2 px-4 border-b">
-                    {materi.description || "-"}
+                    <td className="py-2.5 pr-4 text-slate-500">
+                    {[
+                        materi.youtube_link ? "Video" : null,
+                        materi.pdf_link ? "PDF" : null,
+                    ].filter(Boolean).join(" + ") || "Teks"}
                     </td>
-                    <td className="py-2 px-4 border-b">
-                    {materi.youtube_link ? (
-                        <a
-                        href={materi.youtube_link}
-                        className="text-blue-500 hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >
-                        Buka Video
-                        </a>
-                    ) : (
-                        "-"
-                    )}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                    {materi.pdf_link ? (
-                        <a
-                        href={materi.pdf_link}
-                        className="text-blue-500 hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >
-                        Buka PDF
-                        </a>
-                    ) : (
-                        "-"
-                    )}
+                    <td className="py-2.5">
+                        <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                            materi.status === "published"
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "bg-slate-100 text-slate-500"
+                        }`}>
+                            {materi.status === "published" ? "Tayang" : "Draf"}
+                        </span>
                     </td>
                 </tr>
                 ))}
             </tbody>
             </table>
         </div>
+        )}
         </div>
     );
 }

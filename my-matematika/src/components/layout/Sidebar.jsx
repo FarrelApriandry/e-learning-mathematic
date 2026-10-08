@@ -6,7 +6,7 @@ import {
   BookCopy,
   ScrollText,
   CalendarClock,
-  Bolt,
+  Settings,
   X,
   LogOut,
   Globe,
@@ -63,15 +63,22 @@ export default function Sidebar() {
       ],
     },
     { icon: Mail, text: "Masukan", path: "/admin/pesan/" },
-    { icon: Bolt, text: "Settings", path: "/admin/settings/" },
+    { icon: Settings, text: "Settings", path: "/admin/settings/" },
   ];
 
   const linkBase =
-    "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-300";
-  const hover =
-    "hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 hover:text-white hover:translate-x-1 hover:shadow-lg";
+    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
 
   const isActive = (path) => activePath === path;
+
+  // Buka dropdown yang memuat halaman aktif saat pertama render
+  useEffect(() => {
+    const parent = navItems.find((n) =>
+      n.children?.some((c) => c.path === activePath)
+    );
+    if (parent) setOpenDropdown(parent.text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePath]);
 
   const handleLogout = () => {
     logoutAdmin(); // hapus token + redirect ke /admin/
@@ -84,7 +91,7 @@ export default function Sidebar() {
         {isOpen && (
           <motion.div
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+            className="fixed inset-0 bg-slate-950/50 z-40 md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -97,48 +104,44 @@ export default function Sidebar() {
         {(isOpen ||
           (typeof window !== "undefined" && window.innerWidth >= 768)) && (
           <motion.aside
-            initial={{ x: -250, opacity: 0 }}
+            initial={{ x: -260, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -250, opacity: 0 }}
-            transition={{ type: "spring", damping: 20, stiffness: 100 }}
-            className="
-              fixed md:static top-0 left-0 h-screen md:h-auto z-50 
-              bg-gradient-to-b from-blue-600 to-indigo-700 
-              text-white border-r border-blue-700/50 p-5 w-64
-              shadow-xl shadow-blue-900/30 flex flex-col justify-between
-            "
+            exit={{ x: -260, opacity: 0 }}
+            transition={{ type: "tween", duration: 0.2 }}
+            className="fixed md:static top-0 left-0 h-screen md:h-auto z-50 bg-slate-900 text-slate-300 w-64 flex flex-col justify-between border-r border-slate-800"
           >
             {/* Top: Logo & Nav */}
-            <div>
+            <div className="p-4">
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <a href="/admin/dashboard/" className="flex items-center gap-3">
-                  <motion.div
-                    className="w-10 h-10 bg-gradient-to-br from-blue-300 to-indigo-400 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md"
-                    whileHover={{ rotate: 8, scale: 1.05 }}
-                  >
-                    A+
-                  </motion.div>
-                  <span className="font-semibold text-sm md:block hidden tracking-wide">
-                    Asyik Math
+              <div className="flex items-center justify-between mb-5 px-1">
+                <a href="/admin/dashboard/" className="flex items-center gap-2.5">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 7-3.6 9.4a1 1 0 0 1-1.8 0L9 7"/><path d="M6 19h12"/></svg>
+                  </span>
+                  <span className="leading-tight">
+                    <span className="block text-sm font-extrabold tracking-tight text-white">
+                      Asyik Math
+                    </span>
+                    <span className="block text-[11px] font-medium text-slate-400">
+                      Panel Admin
+                    </span>
                   </span>
                 </a>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-md hover:bg-blue-500/30 text-blue-100 md:hidden"
+                  className="p-2 rounded-md hover:bg-slate-800 text-slate-400 md:hidden"
+                  aria-label="Tutup menu"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="h-px w-full bg-white/20 mb-4"></div>
-
               {/* Navigation */}
-              <nav className="flex flex-col gap-1">
+              <nav className="flex flex-col gap-0.5">
                 {navItems.map(({ icon: Icon, text, path, children }) => (
                   <div key={text}>
                     {/* item utama */}
-                    <motion.div
+                    <div
                       onClick={() =>
                         children
                           ? setOpenDropdown(
@@ -146,23 +149,21 @@ export default function Sidebar() {
                             )
                           : (window.location.href = path)
                       }
-                      className={`${linkBase} ${hover} cursor-pointer ${
-                        isActive(path)
-                          ? "bg-blue-500/60 text-white shadow-md"
-                          : "text-blue-100"
+                      className={`${linkBase} cursor-pointer ${
+                        isActive(path) || children?.some((c) => isActive(c.path))
+                          ? "bg-indigo-600 text-white"
+                          : "text-slate-300 hover:bg-slate-800 hover:text-white"
                       }`}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-5 h-5 shrink-0" />
                       <span>{text}</span>
                       {children &&
                         (openDropdown === text ? (
-                          <ChevronDown className="ml-auto w-4 h-4" />
+                          <ChevronDown className="ml-auto w-4 h-4 text-slate-400" />
                         ) : (
-                          <ChevronRight className="ml-auto w-4 h-4" />
+                          <ChevronRight className="ml-auto w-4 h-4 text-slate-400" />
                         ))}
-                    </motion.div>
+                    </div>
 
                     {/* dropdown items */}
                     <AnimatePresence>
@@ -171,16 +172,17 @@ export default function Sidebar() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="ml-8 mt-1 flex flex-col gap-1"
+                          transition={{ duration: 0.15 }}
+                          className="ml-4 mt-0.5 mb-1 flex flex-col gap-0.5 overflow-hidden border-l border-slate-800 pl-3"
                         >
                           {children.map((child) => (
                             <a
                               key={child.path}
                               href={child.path}
-                              className={`block px-3 py-2 rounded-md text-sm ${
+                              className={`block px-3 py-2 rounded-md text-sm transition-colors ${
                                 isActive(child.path)
-                                  ? "bg-blue-500/60 text-white"
-                                  : "text-blue-200 hover:text-white hover:bg-blue-500/30"
+                                  ? "bg-indigo-600/20 text-white"
+                                  : "text-slate-400 hover:text-white hover:bg-slate-800"
                               }`}
                             >
                               {child.text}
@@ -195,17 +197,15 @@ export default function Sidebar() {
             </div>
 
             {/* Bottom: Logout */}
-            <motion.div
-              onClick={handleLogout}
-              className="mt-6 flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 
-                        hover:bg-red-500/20 hover:text-red-100 cursor-pointer 
-                        transition-all duration-300"
-              whileHover={{ x: 4, scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="text-sm font-medium">Logout</span>
-            </motion.div>
+            <div className="p-4 border-t border-slate-800">
+              <div
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white cursor-pointer transition-colors"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Keluar</span>
+              </div>
+            </div>
           </motion.aside>
         )}
       </AnimatePresence>
